@@ -4,7 +4,7 @@
 #include "Dice.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
-#include "MiniRogue_TFGGameModeBase.h"
+#include "MiniRogue_TFG/MiniRogue_TFGGameModeBase.h"
 
 // Sets default values
 ADice::ADice()

@@ -18,4 +18,12 @@ class MINIROGUE_TFG_API AMiniRogue_TFGGameModeBase : public AGameModeBase
 public:
 	UPROPERTY(VisibleAnywhere,Category="Temporal")
 	TMap<TEnumAsByte<EDiceType>, int> Results;
+	UPROPERTY(EditAnywhere, Category = "Temporal")
+	bool RoomFinished;
+	UPROPERTY(EditAnywhere, Category = "Temporal")
+	FVector RightDoor;
+	UPROPERTY(EditAnywhere, Category = "Temporal")
+	FVector BottomDoor;
+	UPROPERTY(EditAnywhere, Category = "Temporal")
+	FVector	Center;
 };
