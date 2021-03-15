@@ -30,13 +30,14 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
+	GetWorldTimerManager().SetTimer(Timer, this, &ABaseCharacter::CheckArrowVisibilities, 1.f, true);
 	if (GM) {
 		FVector Center = GM->Center;
 		APlayerController* Controllerel = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		Controllerel->bShowMouseCursor = true;
 		Controllerel->bEnableClickEvents = true;
-		BottomArrow->SetVisibility(RightArrowVisibility);
-		RightArrow->SetVisibility(BottomArrowVisibility);
+		BottomArrow->SetVisibility(BottomArrowVisibility);
+		RightArrow->SetVisibility(RightArrowVisibility);
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, Center);
 		float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(),Center).Yaw;
 		this->GetMesh()->AddLocalRotation(FRotator(0.f,YawRot,0.f));
@@ -50,18 +51,38 @@ void ABaseCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+void ABaseCharacter::CheckArrowVisibilities() {
+
+	if (BottomArrowVisibility && RightArrowVisibility) {
+		RightArrow->SetVisibility(true);
+		BottomArrow->SetVisibility(true);
+		GetWorldTimerManager().ClearTimer(Timer);
+
+	}else if (BottomArrowVisibility) {
+		BottomArrow->SetVisibility(true);
+		GetWorldTimerManager().ClearTimer(Timer);
+	}
+	else if (RightArrowVisibility) {
+		RightArrow->SetVisibility(true);
+		GetWorldTimerManager().ClearTimer(Timer);
+	}
+
+}
 
 void ABaseCharacter::OnClickedRightArrow(UPrimitiveComponent* TouchedComponent, FKey buttonPresed)
 {
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (GM) {
-		if (GM->RoomFinished) {
+		if (GM->RoomFinished && RightArrowVisibility) {
 			APlayerController* Controllerel = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 			FVector FinalLoc = GM->RightDoor;
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, FinalLoc);
 			float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), FinalLoc).Yaw;
 			this->GetMesh()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
+			Controllerel->bEnableClickEvents = false;
+			BottomArrow->SetVisibility(false);
+			RightArrow->SetVisibility(false);
 		}
 	}
 
@@ -71,17 +92,21 @@ void ABaseCharacter::OnClickedBottomArrow(UPrimitiveComponent* TouchedComponent,
 {
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (GM) {
-		if (GM->RoomFinished) {
+		if (GM->RoomFinished && BottomArrowVisibility) {
 			APlayerController* Controllerel = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 			FVector FinalLoc = GM->BottomDoor;
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, FinalLoc);
 			float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), FinalLoc).Yaw;
 			this->GetMesh()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
+			Controllerel->bEnableClickEvents = false;
+			BottomArrow->SetVisibility(false);
+			RightArrow->SetVisibility(false);
 		}
 	}
 }
 
+//Solo sirve para comprobar, eliminar cuando se implemente la habitacion base en C++
 void ABaseCharacter::Debug()
 {
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
