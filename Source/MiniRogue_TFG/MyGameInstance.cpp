@@ -3,3 +3,14 @@
 
 #include "MyGameInstance.h"
 
+UMyGameInstance::UMyGameInstance() {
+
+}
+
+void UMyGameInstance::PassLevel()
+{
+}
+
+void UMyGameInstance::PassFloor()
+{
+}

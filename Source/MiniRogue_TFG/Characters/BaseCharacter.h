@@ -7,6 +7,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "InputCoreTypes.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
+#include "TimerManager.h"
 #include "MiniRogue_TFG/Interfaces/Potion.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
@@ -45,9 +46,9 @@ public:
 	TArray<TScriptInterface<IPotion>> Potions;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TSet<TEnumAsByte<ENegativeState>> States;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool RightArrowVisibility = false;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool BottomArrowVisibility = false;
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -62,6 +63,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	FTimerHandle Timer;
+
+	void CheckArrowVisibilities();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -73,6 +78,8 @@ public:
 	void OnClickedBottomArrow(UPrimitiveComponent* TouchedComponent, FKey buttonPresed);
 
 	void Debug();
+
+	
 
 
 	// Called to bind functionality to input
