@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "Room.h"
+#include "MiniRogue_TFG/Room.h"
 #include "MyGameInstance.generated.h"
 
 /**
@@ -21,10 +21,10 @@ public:
 	//Attributes
 	//Total de habitaciones
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Room Data")
-	TArray<TSubclassOf<ARoom>> Rooms;
+	TArray<TSubclassOf<class ARoom>> Rooms;
 	//Habitaciones en el nivel
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Data")
-	TArray<TSubclassOf<ARoom>> LevelPool;
+	TArray<TSubclassOf<class ARoom>> LevelPool;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Room Data")
 	int RoomIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")

@@ -58,5 +58,8 @@ void ARoom::EventFinishRoom() {
 			break;
 		}
 	}
+	
+}
+void ARoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult) {
 
 }
