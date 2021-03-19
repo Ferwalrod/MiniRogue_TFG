@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
+#include "MiniRogue_TFG/PotionObject.h"
 #include "Components/PrimitiveComponent.h"
 #include "InputCoreTypes.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
@@ -43,7 +44,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
 	int MaxArmor = 4;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-	TArray<TScriptInterface<IPotion>> Potions;
+	TArray<APotionObject*> Potions;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TSet<TEnumAsByte<ENegativeState>> States;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
