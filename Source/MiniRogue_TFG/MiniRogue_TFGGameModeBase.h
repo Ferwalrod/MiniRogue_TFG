@@ -16,7 +16,7 @@ class MINIROGUE_TFG_API AMiniRogue_TFGGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere,Category="Temporal")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Temporal")
 	TMap<TEnumAsByte<EDiceType>, int> Results;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Temporal")
 	bool RoomFinished;
