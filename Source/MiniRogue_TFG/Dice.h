@@ -29,7 +29,7 @@ public:
 	TEnumAsByte<EDiceType> Type;
 
 	//Components
-	UPROPERTY(VisibleAnywhere,Category="Components")
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components")
 	UStaticMeshComponent* Dice;
 protected:
 	// Called when the game starts or when spawned
