@@ -11,10 +11,10 @@
 UENUM(BlueprintType)
 enum EAttackState 
 {
-	Poisoned UMETA(DisplayName = "Poisoned"),
-	Cursed UMETA(DisplayName = "Cursed"),
-	Blinded UMETA(DisplayName = "Blinded"),
-	Weakness UMETA(DisplayName="Weakness"),
-	NoArmor UMETA(DisplayName="NoArmor"),
-	NoneState UMETA(DisplayName="NoneState")
+	PoisonAttack UMETA(DisplayName = "Poisoned"),
+	CurseAttack UMETA(DisplayName = "Cursed"),
+	BlindAttack UMETA(DisplayName = "Blinded"),
+	WeaknessAttack UMETA(DisplayName="Weakness"),
+	NoArmorAttack UMETA(DisplayName="NoArmor"),
+	NoneStateAttack UMETA(DisplayName="NoneState")
 };

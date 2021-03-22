@@ -17,7 +17,7 @@ class MINIROGUE_TFG_API AMiniRogue_TFGGameModeBase : public AGameModeBase
 
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Temporal")
-	TMap<TEnumAsByte<EDiceType>, int> Results;
+	TMap<TEnumAsByte<EDiceType>,int> Results;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Temporal")
 	bool RoomFinished;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Temporal")
