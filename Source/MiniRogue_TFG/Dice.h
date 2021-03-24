@@ -19,13 +19,13 @@ public:
 	ADice();
 
 	//Attributes
-	UPROPERTY(EditAnywhere, Category = "Attributes")
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Attributes")
 	TMap<FName, int> ValueMapping;
-	UPROPERTY(VisibleAnywhere, Category = "Attributes")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
 	FName FaceShowing;
-	UPROPERTY(VisibleAnywhere, Category = "Attributes")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
 	float Hightest;
-	UPROPERTY(EditAnywhere, Category = "Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	TEnumAsByte<EDiceType> Type;
 
 	//Components
