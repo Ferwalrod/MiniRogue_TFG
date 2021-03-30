@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
-#include "MiniRogue_TFG/PotionObject.h"
 #include "Components/PrimitiveComponent.h"
 #include "InputCoreTypes.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
@@ -12,6 +11,9 @@
 #include "MiniRogue_TFG/Interfaces/Potion.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
+
+
+class APotionObject;
 
 UCLASS()
 class MINIROGUE_TFG_API ABaseCharacter : public ACharacter
@@ -53,6 +55,8 @@ public:
 	bool RightArrowVisibility = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool BottomArrowVisibility = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	bool NextSuccess = false;
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* RightArrow;

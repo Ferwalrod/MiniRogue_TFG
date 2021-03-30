@@ -12,5 +12,6 @@ UENUM(BlueprintType)
 enum ENegativeState {
 	Poisoned UMETA(DisplayName="Poisoned"),
 	Cursed UMETA(DisplayName="Cursed"),
-	Blinded UMETA(DisplayName="Blinded")
+	Blinded UMETA(DisplayName="Blinded"),
+	Frozen UMETA(DisplayName="Frozen")
 };
