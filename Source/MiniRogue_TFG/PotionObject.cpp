@@ -25,8 +25,30 @@ void APotionObject::Tick(float DeltaTime)
 
 }
 
-void APotionObject::UsePotion()
+void APotionObject::UsePotion(ACharacter* User, ACharacter* Target)
 {
+	ABaseCharacter* Player = Cast<ABaseCharacter>(User);
+	//Cast the target to monster. I can't cast because monster class is only in blueprint
+	switch (Type) {
+	case EPotionType::Fire_Potion:
+
+		break;
+	case EPotionType::Frost_Potion:
+
+		break;
+	case EPotionType::Health_Potion:
+
+		break;
+	case EPotionType::Holy_Water_Potion:
+
+		break;
+	case EPotionType::Perception_Potion:
+
+		break;
+	case EPotionType::Poison_Potion:
+
+		break;
+	}
 }
 
 TEnumAsByte<EPotionType> APotionObject::getType()

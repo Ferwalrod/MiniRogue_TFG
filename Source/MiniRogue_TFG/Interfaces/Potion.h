@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MiniRogue_TFG/Enumerates/PotionType.h"
 #include "UObject/Interface.h"
+#include "GameFramework/Character.h"
 #include "Potion.generated.h"
 
 // This class does not need to be modified.
@@ -24,6 +25,6 @@ class MINIROGUE_TFG_API IPotion
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	virtual void UsePotion() = 0;
+	virtual void UsePotion(ACharacter* User,ACharacter* Target) = 0;
 	virtual TEnumAsByte<EPotionType> getType() = 0;
 };

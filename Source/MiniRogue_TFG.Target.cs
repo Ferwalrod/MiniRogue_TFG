@@ -8,6 +8,8 @@ public class MiniRogue_TFGTarget : TargetRules
 	public MiniRogue_TFGTarget( TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
+		bUseUnityBuild = false;
+		bUsePCHFiles = false;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.AddRange( new string[] { "MiniRogue_TFG" } );
 	}
