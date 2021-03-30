@@ -43,6 +43,8 @@ public:
 	int Armor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
 	int MaxArmor = 4;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	int WeaponCharges = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TArray<APotionObject*> Potions;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
