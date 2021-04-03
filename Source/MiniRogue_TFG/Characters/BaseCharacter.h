@@ -7,6 +7,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "InputCoreTypes.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
+//#include "MiniRogue_TFG/Enumerates/PositiveState.h"
 #include "TimerManager.h"
 #include "MiniRogue_TFG/Interfaces/Potion.h"
 #include "GameFramework/Character.h"
@@ -14,6 +15,11 @@
 
 
 class APotionObject;
+
+UENUM(BlueprintType)
+enum EPositiveState {
+	Perceptive UMETA(DisplayName = "Perceptive")
+};
 
 UCLASS()
 class MINIROGUE_TFG_API ABaseCharacter : public ACharacter
@@ -52,11 +58,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TSet<TEnumAsByte<ENegativeState>> States;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	TSet<TEnumAsByte<EPositiveState>> PositiveStates;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool RightArrowVisibility = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool BottomArrowVisibility = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool NextSuccess = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	bool isInCombat = false;
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* RightArrow;
