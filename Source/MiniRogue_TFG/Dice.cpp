@@ -44,7 +44,15 @@ void ADice::OnSleep(UPrimitiveComponent* sleeper, FName Bone)
 	}
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (GM) {
-		GM->Results.Add(Type, ValueMapping[FaceShowing]);
+		TArray<int> Array;
+		if (!GM->Results.Contains(Type)) {
+			GM->Results.Add(Type, ValueMapping[FaceShowing]);
+		}
+		else {
+			int Value=*GM->Results.Find(Type)+ ValueMapping[FaceShowing];
+			GM->Results.Emplace(Type, Value);
+		}
+		
 	}
 }
 

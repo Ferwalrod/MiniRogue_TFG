@@ -7,9 +7,19 @@
 #include "Components/PrimitiveComponent.h"
 #include "InputCoreTypes.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
+//#include "MiniRogue_TFG/Enumerates/PositiveState.h"
+#include "TimerManager.h"
 #include "MiniRogue_TFG/Interfaces/Potion.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
+
+
+class APotionObject;
+
+UENUM(BlueprintType)
+enum EPositiveState {
+	Perceptive UMETA(DisplayName = "Perceptive")
+};
 
 UCLASS()
 class MINIROGUE_TFG_API ABaseCharacter : public ACharacter
@@ -41,14 +51,22 @@ public:
 	int Armor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
 	int MaxArmor = 4;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	int WeaponCharges = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-	TArray<TScriptInterface<IPotion>> Potions;
+	TArray<APotionObject*> Potions;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TSet<TEnumAsByte<ENegativeState>> States;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	TSet<TEnumAsByte<EPositiveState>> PositiveStates;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool RightArrowVisibility = false;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool BottomArrowVisibility = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	bool NextSuccess = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	bool isInCombat = false;
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* RightArrow;
@@ -62,6 +80,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	FTimerHandle Timer;
+
+	void CheckArrowVisibilities();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -73,6 +95,8 @@ public:
 	void OnClickedBottomArrow(UPrimitiveComponent* TouchedComponent, FKey buttonPresed);
 
 	void Debug();
+
+	
 
 
 	// Called to bind functionality to input

@@ -8,6 +8,8 @@ public class MiniRogue_TFGEditorTarget : TargetRules
 	public MiniRogue_TFGEditorTarget( TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
+		bUseUnityBuild = false;
+		bUsePCHFiles = false;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.AddRange( new string[] { "MiniRogue_TFG" } );
 	}
