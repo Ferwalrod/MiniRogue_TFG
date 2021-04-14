@@ -7,7 +7,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "InputCoreTypes.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
-//#include "MiniRogue_TFG/Enumerates/PositiveState.h"
+#include "MiniRogue_TFG/WeaponType.h"
 #include "TimerManager.h"
 #include "MiniRogue_TFG/Interfaces/Potion.h"
 #include "GameFramework/Character.h"
@@ -67,6 +67,9 @@ public:
 	bool NextSuccess = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool isInCombat = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	TEnumAsByte<EWeaponType> currentWeapon = NoWeapon;
+
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* RightArrow;
