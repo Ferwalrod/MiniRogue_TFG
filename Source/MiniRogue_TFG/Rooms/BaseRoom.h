@@ -10,6 +10,7 @@ class ABaseCharacter;
 class UBoxComponent;
 class AActor;
 class UPrimitiveComponent;
+class UStaticMeshComponent;
 
 UCLASS(Abstract)
 class MINIROGUE_TFG_API ABaseRoom : public AActor
@@ -30,6 +31,19 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UBoxComponent* RoomCollision;
 
+	//Components which are going to be on the scenery(chains, skulls, models of the room)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scenery Assets")
+	UStaticMeshComponent* Scenery1;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scenery Assets")
+	UStaticMeshComponent* Scenery2;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scenery Assets")
+	UStaticMeshComponent* Scenery3;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scenery Assets")
+	UStaticMeshComponent* Scenery4;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scenery Assets")
+	UStaticMeshComponent* Scenery5;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Scenery Assets")
+	UStaticMeshComponent* Scenery6;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
