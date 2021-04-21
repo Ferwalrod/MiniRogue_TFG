@@ -54,7 +54,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	int WeaponCharges = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-	TArray<APotionObject*> Potions;
+	TArray<TSubclassOf<APotionObject>> Potions;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TSet<TEnumAsByte<ENegativeState>> States;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
@@ -69,6 +69,8 @@ public:
 	bool isInCombat = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TEnumAsByte<EWeaponType> currentWeapon = NoWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	bool SkillUsed = false;
 
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
