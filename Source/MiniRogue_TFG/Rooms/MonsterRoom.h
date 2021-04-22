@@ -62,9 +62,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void RoomBehavior() override;
 	void GetPlayerLevel(ABaseCharacter* Player);
+	void StartCombat();
+	void Check();
+	void PlayerTurn();
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult) ;
 
+	UFUNCTION()
+	void OnClickedButton(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 	//Macros
 	void DestroyDices();
 	void LaunchDices();

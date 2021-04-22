@@ -6,6 +6,7 @@
 #include "MiniRogue_TFG/Characters/BaseCharacter.h"
 #include "MiniRogue_TFG/Characters/MonsterBase.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
+#include "Animation/AnimSequence.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 #include "MiniRogue_TFG/MiniRogue_TFGGameModeBase.h"
@@ -14,8 +15,13 @@
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/TextRenderComponent.h"
+#include "MiniRogue_TFG/Characters/MonsterBase.h"
+#include "MiniRogue_TFG/MyGameInstance.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "MiniRogue_TFG/Characters/RogueCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 
@@ -27,6 +33,7 @@ AMonsterRoom::AMonsterRoom() {
 	DiceRespawn->AttachTo(GetRootComponent());
 	Plane = CreateDefaultSubobject<UStaticMeshComponent>("Plane");
 	Plane->AttachTo(GetRootComponent());
+	Plane->OnClicked.AddDynamic(this, &AMonsterRoom::OnClickedButton);
 	Text = CreateDefaultSubobject<UTextRenderComponent>("TextRender");
 	Text->AttachTo(Plane);
 	RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonsterRoom::OnOverlap);
@@ -53,10 +60,15 @@ void AMonsterRoom::RoomBehavior()
 	MonsterSpawned->SetChildActorClass(MonsterClass);
 	AMonsterBase* MonsterCasted = Cast<AMonsterBase>(MonsterSpawned->GetChildActor());
 	if (MonsterCasted) {
-		Monster = MonsterCasted;
 		Monster->InitializeMonster();
-		//I need to change myGameInstance
-		//...
+		Monster = MonsterCasted;
+		UMyGameInstance* GameIns = Cast<UMyGameInstance>(GetGameInstance());
+		if (GameIns) {
+			GameIns->ActMonster = Monster;
+			this->GetPlayerLevel(Character);
+			this->StartCombat();
+		}
+		
 	}
 }
 
@@ -73,8 +85,166 @@ void AMonsterRoom::GetPlayerLevel(ABaseCharacter* Player)
 	}
 }
 
+void AMonsterRoom::StartCombat()
+{
+	Text->SetVisibility(true, true);
+	Plane->SetVisibility(true, true);
+	GetWorldTimerManager().SetTimer(CombatTimer, this, &AMonsterRoom::PlayerTurn, 0.4f, true);
+}
+
+void AMonsterRoom::Check()
+{
+	if (Character->States.Contains(ENegativeState::Poisoned) && Character->States.Contains(ENegativeState::Cursed)) {
+		ExpectedDices = 4;
+	}
+	else if (Character->States.Contains(ENegativeState::Poisoned)) {
+		ExpectedDices = 3;
+	}
+	else if (Character->States.Contains(ENegativeState::Cursed)) {
+		ExpectedDices = 3;
+	}
+	else {
+		ExpectedDices = 2;
+	}
+	if (CombatEnded) {
+		GetWorldTimerManager().ClearTimer(Timer);
+		this->EventFinishRoom();
+	}
+}
+
+void AMonsterRoom::PlayerTurn()
+{
+	if (Monster->IsDead) {
+		CombatEnded = true;
+		Character->isInCombat = false;
+		//=========(HERE)==========Update the HUD
+		GetWorldTimerManager().ClearTimer(CombatTimer);
+		DestroyDices();
+		Plane->SetVisibility(false, true);
+		Monster->GetMesh()->PlayAnimation(Monster->AnimDead, false);
+		//=====(HERE) SET VISIBILITY OF THE MONSTER HEALTH BAR
+		FLatentActionInfo info;
+		UKismetSystemLibrary::Delay(GetWorld(),3.f,info);
+		Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
+		MonsterSpawned->SetChildActorClass(nullptr);
+	}
+	else {
+		if (GM->Results.Num() == ExpectedDices) {
+			Character->Health = Character->Health + *GM->Results.Find(EDiceType::Poison);
+			ARogueCharacter* Rogue = Cast<ARogueCharacter>(Character);
+			if (Rogue && Rogue->BackStabActivated) {
+				Monster->Live = Monster->Live - (2*(*GM->Results.Find(EDiceType::Player)) + *GM->Results.Find(EDiceType::Curse));
+				Rogue->BackStabActivated=false;
+			}
+			else {
+				Monster->Live = Monster->Live - (*GM->Results.Find(EDiceType::Player) + *GM->Results.Find(EDiceType::Curse));
+			}
+			Monster->UpdateMonsterState();
+			if (Monster->IsDead || Monster->Live <= 0) {
+				CombatEnded = true;
+				Character->isInCombat = false;
+				//=========(HERE)==========Update the HUD
+				GetWorldTimerManager().ClearTimer(CombatTimer);
+				DestroyDices();
+				Plane->SetVisibility(false, true);
+				Monster->GetMesh()->PlayAnimation(Monster->AnimDead, false);
+				//=====(HERE) SET VISIBILITY OF THE MONSTER HEALTH BAR
+				FLatentActionInfo info;
+				UKismetSystemLibrary::Delay(GetWorld(), 3.f, info);
+				Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
+				MonsterSpawned->SetChildActorClass(nullptr);
+			}
+			else {
+				if (Monster->IsMonsterFrozen) {
+					GM->Results.Empty(ExpectedDices);
+					//=========UPDATE CHARACTER HUD
+					DestroyDices();
+				}
+				else {
+					Monster->GetMesh()->PlayAnimation(Monster->AnimCombat, false);
+					if (*GM->Results.Find(EDiceType::Dungeon) != 1) {
+						switch (Monster->DamageType) {
+						case EAttackState::PoisonAttack:
+							Character->States.Add(ENegativeState::Poisoned);
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDices();
+							break;
+						case EAttackState::CurseAttack:
+							Character->States.Add(ENegativeState::Cursed);
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDices();
+							break;
+						case EAttackState::BlindAttack:
+							Character->States.Add(ENegativeState::Blinded);
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDices();
+							break;
+						case EAttackState::WeaknessAttack:
+							Character->Exp--;
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDices();
+							break;
+						case EAttackState::NoArmorAttack:
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDices();
+							break;
+						case EAttackState::NoneStateAttack:
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDices();
+							break;
+						}
+					}
+					else {
+						GM->Results.Empty(ExpectedDices);
+						//=========UPDATE CHARACTER HUD
+						DestroyDices();
+					}
+				}
+			}
+		}
+	}
+}
+
 void AMonsterRoom::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)
 {
+	ABaseCharacter* Player = Cast<ABaseCharacter>(OtherActor);
+	if (Player) {
+		Character = Player;
+		ARogueCharacter* Rogue = Cast<ARogueCharacter>(Character);
+		if (Rogue) {
+			if (Rogue->EvasionActivated) {
+				this->EventFinishRoom();
+				Rogue->EvasionActivated = false;
+			}else {
+				this->RoomBehavior();
+				Character->isInCombat = true;
+				//=======================Update the HUD
+				GetWorldTimerManager().SetTimer(Timer,this, &AMonsterRoom::Check,0.3f,true);
+			}
+		}else {
+			this->RoomBehavior();
+			Character->isInCombat = true;
+			//=======================Update the HUD
+			GetWorldTimerManager().SetTimer(Timer, this, &AMonsterRoom::Check, 0.3f, true);
+		}
+	}
+}
+
+void AMonsterRoom::OnClickedButton(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+	this->LaunchDices();
 }
 
 void AMonsterRoom::DestroyDices()

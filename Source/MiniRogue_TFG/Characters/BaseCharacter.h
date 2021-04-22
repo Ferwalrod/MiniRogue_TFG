@@ -101,7 +101,7 @@ public:
 
 	void Debug();
 
-	
+	void TakeDamageCpp(int Damage);
 
 
 	// Called to bind functionality to input

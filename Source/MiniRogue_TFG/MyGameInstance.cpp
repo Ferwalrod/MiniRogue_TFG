@@ -2,6 +2,7 @@
 
 
 #include "MyGameInstance.h"
+#include "Characters/MonsterBase.h"
 
 UMyGameInstance::UMyGameInstance() {
 

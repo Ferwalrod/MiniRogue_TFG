@@ -120,6 +120,21 @@ void ABaseCharacter::Debug()
 
 }
 
+void ABaseCharacter::TakeDamageCpp(int Damage)
+{
+	if (Armor - Damage <= 0) {
+		Health = Health - UKismetMathLibrary::Abs(Armor - Damage);
+		Armor = 0;
+		if (Health <= 0) {
+			//UGameplayStatics::SetGamePaused(GetWorld(),false);
+			//Add the game over screen and add to viewport
+		}
+	}
+	else {
+		Armor = Armor - Damage;
+	}
+}
+
 // Called to bind functionality to input
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

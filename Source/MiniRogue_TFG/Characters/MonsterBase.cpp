@@ -14,6 +14,7 @@ AMonsterBase::AMonsterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	this->GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
 
 }
 
@@ -50,6 +51,7 @@ void AMonsterBase::InitializeMonster()
 	}
 
 	//I need the widget c++ class to continue
+	//...
 }
 
 void AMonsterBase::UpdateMonsterState()
