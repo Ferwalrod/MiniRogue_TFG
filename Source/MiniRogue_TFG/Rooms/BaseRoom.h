@@ -11,6 +11,7 @@ class UBoxComponent;
 class AActor;
 class UPrimitiveComponent;
 class UStaticMeshComponent;
+class UMyGameInstance;
 
 UCLASS(Abstract)
 class MINIROGUE_TFG_API ABaseRoom : public AActor
@@ -25,6 +26,8 @@ public:
 	int IndexRoom;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Attributes")
 	ABaseCharacter* Character;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System Attributes")
+	UMyGameInstance* GI;
 
 	//Components
 	//Room collision is the box which triggers the room
@@ -54,7 +57,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult);
+	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)PURE_VIRTUAL(ABaseRoom::OnBeginOverlap,);
 	UFUNCTION(BlueprintCallable)
 	void EventFinishRoom();
 	

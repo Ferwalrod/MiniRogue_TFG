@@ -41,7 +41,7 @@ void ABaseRoom::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance());
+	GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	if (GI) {
 		IndexRoom = GI->RoomIndex;
 	}
@@ -55,14 +55,6 @@ void ABaseRoom::Tick(float DeltaTime)
 
 }
 
-void ABaseRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)
-{
-	ABaseCharacter* BC = Cast<ABaseCharacter>(OtherActor);
-	if (BC) {
-		Character = BC;
-		RoomBehavior();
-	}
-}
 
 void ABaseRoom::EventFinishRoom()
 {

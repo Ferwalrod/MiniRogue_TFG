@@ -8,7 +8,7 @@ ARogueCharacter::ARogueCharacter() {
 }
 void ARogueCharacter::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::ABaseCharacter::BeginPlay();
 }
 
 void ARogueCharacter::Tick(float DeltaTime)

@@ -65,8 +65,8 @@ public:
 	void StartCombat();
 	void Check();
 	void PlayerTurn();
-	UFUNCTION()
-	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult) ;
+	
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult) override ;
 
 	UFUNCTION()
 	void OnClickedButton(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);

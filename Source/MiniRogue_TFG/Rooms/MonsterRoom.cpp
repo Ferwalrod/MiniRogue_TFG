@@ -20,6 +20,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "MiniRogue_TFG/Characters/RogueCharacter.h"
 #include "UObject/ConstructorHelpers.h"
@@ -36,11 +37,11 @@ AMonsterRoom::AMonsterRoom() {
 	Plane->OnClicked.AddDynamic(this, &AMonsterRoom::OnClickedButton);
 	Text = CreateDefaultSubobject<UTextRenderComponent>("TextRender");
 	Text->AttachTo(Plane);
-	RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonsterRoom::OnOverlap);
+	//RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonsterRoom::OnOverlap);
 }
 void AMonsterRoom::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::ABaseRoom::BeginPlay();
 	Plane->SetVisibility(false, true);
 	AMiniRogue_TFGGameModeBase* gamemode = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
 		if (gamemode) {
@@ -58,13 +59,13 @@ void AMonsterRoom::Tick(float DeltaTime)
 void AMonsterRoom::RoomBehavior()
 {
 	MonsterSpawned->SetChildActorClass(MonsterClass);
+	MonsterSpawned->CreateChildActor();
 	AMonsterBase* MonsterCasted = Cast<AMonsterBase>(MonsterSpawned->GetChildActor());
 	if (MonsterCasted) {
 		Monster->InitializeMonster();
 		Monster = MonsterCasted;
-		UMyGameInstance* GameIns = Cast<UMyGameInstance>(GetGameInstance());
-		if (GameIns) {
-			GameIns->ActMonster = Monster;
+		if (GI) {
+			GI->ActMonster = Monster;
 			this->GetPlayerLevel(Character);
 			this->StartCombat();
 		}
@@ -127,14 +128,15 @@ void AMonsterRoom::PlayerTurn()
 		UKismetSystemLibrary::Delay(GetWorld(),3.f,info);
 		Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
 		MonsterSpawned->SetChildActorClass(nullptr);
+		MonsterSpawned->CreateChildActor();
 	}
 	else {
 		if (GM->Results.Num() == ExpectedDices) {
 			Character->Health = Character->Health + *GM->Results.Find(EDiceType::Poison);
-			ARogueCharacter* Rogue = Cast<ARogueCharacter>(Character);
-			if (Rogue && Rogue->BackStabActivated) {
+			ARogueCharacter* Rogue1 = Cast<ARogueCharacter>(Character);
+			if (Rogue1 && Rogue1->BackStabActivated) {
 				Monster->Live = Monster->Live - (2*(*GM->Results.Find(EDiceType::Player)) + *GM->Results.Find(EDiceType::Curse));
-				Rogue->BackStabActivated=false;
+				Rogue1->BackStabActivated=false;
 			}
 			else {
 				Monster->Live = Monster->Live - (*GM->Results.Find(EDiceType::Player) + *GM->Results.Find(EDiceType::Curse));
@@ -153,6 +155,7 @@ void AMonsterRoom::PlayerTurn()
 				UKismetSystemLibrary::Delay(GetWorld(), 3.f, info);
 				Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
 				MonsterSpawned->SetChildActorClass(nullptr);
+				MonsterSpawned->CreateChildActor();
 			}
 			else {
 				if (Monster->IsMonsterFrozen) {
@@ -217,12 +220,14 @@ void AMonsterRoom::PlayerTurn()
 	}
 }
 
-void AMonsterRoom::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)
+void AMonsterRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)
 {
 	ABaseCharacter* Player = Cast<ABaseCharacter>(OtherActor);
+
 	if (Player) {
 		Character = Player;
-		ARogueCharacter* Rogue = Cast<ARogueCharacter>(Character);
+		RoomBehavior();
+		ARogueCharacter* Rogue = Cast<ARogueCharacter>(Player);
 		if (Rogue) {
 			if (Rogue->EvasionActivated) {
 				this->EventFinishRoom();
