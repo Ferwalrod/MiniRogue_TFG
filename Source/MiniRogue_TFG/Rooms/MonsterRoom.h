@@ -36,12 +36,11 @@ public:
 	UTextRenderComponent* Text;
 
 	//Attributes
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	FTimerHandle CombatTimer;
 	FTimerHandle Timer;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool CombatEnded;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-	FTimerHandle CombatTimer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	AMiniRogue_TFGGameModeBase* GM;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")

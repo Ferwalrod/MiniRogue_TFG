@@ -22,6 +22,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "MiniRogue_TFG/Characters/RogueCharacter.h"
@@ -135,6 +136,7 @@ void AMonsterRoom::Check()
 
 void AMonsterRoom::PlayerTurn()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, UKismetStringLibrary::Conv_BoolToString(Monster->IsDead));
 	if (Monster->IsDead) {
 		CombatEnded = true;
 		Character->isInCombat = false;
