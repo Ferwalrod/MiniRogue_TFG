@@ -4,7 +4,9 @@
 #include "RogueCharacter.h"
 
 ARogueCharacter::ARogueCharacter() {
+
 	PrimaryActorTick.bCanEverTick = true;
+
 }
 void ARogueCharacter::BeginPlay()
 {

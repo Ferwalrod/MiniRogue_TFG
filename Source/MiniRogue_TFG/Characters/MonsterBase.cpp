@@ -4,6 +4,7 @@
 #include "MonsterBase.h"
 #include "Engine/SkeletalMesh.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Engine/World.h"
 #include "Animation/AnimSequence.h"
 #include "MiniRogue_TFG/MyGameInstance.h"
 #include "Materials/MaterialInstanceConstant.h"
@@ -34,7 +35,7 @@ void AMonsterBase::Tick(float DeltaTime)
 
 void AMonsterBase::InitializeMonster()
 {
-	UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance());
+	UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	if (GI) {
 		Floor = GI->FloorIndex;
 		FMonsterLevelStruct EnemyLevel = MonsterLevel[Floor];

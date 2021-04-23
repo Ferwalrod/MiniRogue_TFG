@@ -11,11 +11,13 @@
 #include "Components/BoxComponent.h"
 #include "MiniRogue_TFG/MiniRogue_TFGGameModeBase.h"
 #include "Components/PrimitiveComponent.h"
+#include "Engine/Engine.h"
+//#include "Engine/Blueprint.h"
+#include "MiniRogue_TFG/Dice.h"
 #include "Components/ChildActorComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/TextRenderComponent.h"
-#include "MiniRogue_TFG/Characters/MonsterBase.h"
 #include "MiniRogue_TFG/MyGameInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -37,7 +39,24 @@ AMonsterRoom::AMonsterRoom() {
 	Plane->OnClicked.AddDynamic(this, &AMonsterRoom::OnClickedButton);
 	Text = CreateDefaultSubobject<UTextRenderComponent>("TextRender");
 	Text->AttachTo(Plane);
-	//RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonsterRoom::OnOverlap);
+	RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonsterRoom::OnBeginOverlap);
+
+	/*auto PlayerDClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PlayerDice.PlayerDice'"));
+	if (PlayerDClass.Succeeded()) {
+		PlayerDiceClass = PlayerDClass.Class;
+	}
+	auto DungeonDClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/DungeonDice.DungeonDice''"));
+	if (DungeonDClass.Succeeded()) {
+		DungeonDiceClass = DungeonDClass.Class;
+	}
+	auto PoisonDClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PoisonDice.PoisonDice'"));
+	if (PoisonDClass.Succeeded()) {
+		PoisonDiceClass = PoisonDClass.Class;
+	}
+	auto CurseDClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/CurseDice.CurseDice'"));
+	if (CurseDClass.Succeeded()) {
+		CurseDiceClass = CurseDClass.Class;
+	}*/
 }
 void AMonsterRoom::BeginPlay()
 {
@@ -62,13 +81,14 @@ void AMonsterRoom::RoomBehavior()
 	MonsterSpawned->CreateChildActor();
 	AMonsterBase* MonsterCasted = Cast<AMonsterBase>(MonsterSpawned->GetChildActor());
 	if (MonsterCasted) {
-		Monster->InitializeMonster();
+		MonsterCasted->InitializeMonster();
 		Monster = MonsterCasted;
-		if (GI) {
-			GI->ActMonster = Monster;
-			this->GetPlayerLevel(Character);
-			this->StartCombat();
-		}
+		
+
+		GI->ActMonster = MonsterCasted;
+		this->GetPlayerLevel(Character);
+		this->StartCombat();
+		
 		
 	}
 }
@@ -226,7 +246,7 @@ void AMonsterRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 
 	if (Player) {
 		Character = Player;
-		RoomBehavior();
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("HA CASTEADO EL PLAYER!"));
 		ARogueCharacter* Rogue = Cast<ARogueCharacter>(Player);
 		if (Rogue) {
 			if (Rogue->EvasionActivated) {
@@ -255,9 +275,9 @@ void AMonsterRoom::OnClickedButton(UPrimitiveComponent* TouchedComponent, FKey B
 void AMonsterRoom::DestroyDices()
 {
 	TArray<AActor*> playerDices;
-	auto PlayerDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PlayerDice.PlayerDice'"));
-	if (PlayerDiceClass.Succeeded()) {
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(),PlayerDiceClass.Class, playerDices);
+	//auto PlayerDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PlayerDice.PlayerDice'"));
+	if (PlayerDiceClass) {
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(),PlayerDiceClass, playerDices);
 	}
 	if (playerDices.Num() != 0) {
 		for (int i = 0; i < playerDices.Num(); i++) {
@@ -265,9 +285,9 @@ void AMonsterRoom::DestroyDices()
 		}
 	}
 	TArray<AActor*> dungeonDices;
-	auto DungeonDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/DungeonDice.DungeonDice''"));
-	if (DungeonDiceClass.Succeeded()) {
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), DungeonDiceClass.Class, dungeonDices);
+	//auto DungeonDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/DungeonDice.DungeonDice''"));
+	if (DungeonDiceClass) {
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), DungeonDiceClass, dungeonDices);
 	}
 	if (dungeonDices.Num() != 0) {
 		for (int j = 0; j < dungeonDices.Num(); j++) {
@@ -275,9 +295,9 @@ void AMonsterRoom::DestroyDices()
 		}
 	}
 	TArray<AActor*> poisonDices;
-	auto PoisonDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PoisonDice.PoisonDice'"));
-	if (PoisonDiceClass.Succeeded()) {
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), PoisonDiceClass.Class, poisonDices);
+	//auto PoisonDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PoisonDice.PoisonDice'"));
+	if (PoisonDiceClass) {
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), PoisonDiceClass, poisonDices);
 	}
 	if (poisonDices.Num() != 0) {
 		for (int k = 0; k < poisonDices.Num(); k++) {
@@ -285,9 +305,9 @@ void AMonsterRoom::DestroyDices()
 		}
 	}
 	TArray<AActor*> curseDices;
-	auto CurseDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/CurseDice.CurseDice'"));
-	if (CurseDiceClass.Succeeded()) {
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), CurseDiceClass.Class, curseDices);
+	//auto CurseDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/CurseDice.CurseDice'"));
+	if (CurseDiceClass) {
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), CurseDiceClass, curseDices);
 	}
 	if (curseDices.Num() != 0) {
 		for (int w = 0; w < curseDices.Num(); w++) {
@@ -303,34 +323,34 @@ void AMonsterRoom::LaunchDices()
 {
 	Plane->SetVisibility(false, true);
 	Controller->bEnableClickEvents = false;
-	auto PlayerDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PlayerDice.PlayerDice'"));
-	if (PlayerDiceClass.Succeeded()) {
-		for (int i = 0; i < PlayerLevel - 1; i++) {
+	//auto PlayerDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PlayerDice.PlayerDice'"));
+	if (PlayerDiceClass) {
+		for (int i = 0; i < PlayerLevel ; i++) {
 			FVector Loc = FVector(DiceRespawn->GetRelativeLocation().X, DiceRespawn->GetRelativeLocation().Y+(i*-50), DiceRespawn->GetRelativeLocation().Z);
 			FRotator Rot = FRotator(UKismetMathLibrary::RandomFloatInRange(0.f,360.f), UKismetMathLibrary::RandomFloatInRange(0.f, 360.f), UKismetMathLibrary::RandomFloatInRange(0.f, 360.f));
-			GetWorld()->SpawnActor<AActor>(PlayerDiceClass.Class, Loc, Rot);
+			GetWorld()->SpawnActor<AActor>(PlayerDiceClass, Loc, Rot);
 		}
 	}
-	auto DungeonDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/DungeonDice.DungeonDice'"));
-	if (DungeonDiceClass.Succeeded()) {
+	//auto DungeonDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/DungeonDice.DungeonDice'"));
+	if (DungeonDiceClass) {
 			FVector Loc = FVector(DiceRespawn->GetRelativeLocation().X, DiceRespawn->GetRelativeLocation().Y + 100, DiceRespawn->GetRelativeLocation().Z);
 			FRotator Rot = FRotator(UKismetMathLibrary::RandomFloatInRange(0.f, 360.f), UKismetMathLibrary::RandomFloatInRange(0.f, 360.f), UKismetMathLibrary::RandomFloatInRange(0.f, 360.f));
-			GetWorld()->SpawnActor<AActor>(DungeonDiceClass.Class, Loc, Rot);
+			GetWorld()->SpawnActor<AActor>(DungeonDiceClass, Loc, Rot);
 	}
 	if (Character->States.Contains(ENegativeState::Poisoned)) {
-		auto PoisonDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PoisonDice.PoisonDice'"));
-		if (PoisonDiceClass.Succeeded()) {
+		//auto PoisonDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PoisonDice.PoisonDice'"));
+		if (PoisonDiceClass) {
 			FVector Loc = FVector(DiceRespawn->GetRelativeLocation().X, DiceRespawn->GetRelativeLocation().Y + 200, DiceRespawn->GetRelativeLocation().Z);
 			FRotator Rot = FRotator(UKismetMathLibrary::RandomFloatInRange(0.f, 360.f), UKismetMathLibrary::RandomFloatInRange(0.f, 360.f), UKismetMathLibrary::RandomFloatInRange(0.f, 360.f));
-			GetWorld()->SpawnActor<AActor>(PoisonDiceClass.Class, Loc, Rot);
+			GetWorld()->SpawnActor<AActor>(PoisonDiceClass, Loc, Rot);
 		}
 	}
 	if(Character->States.Contains(ENegativeState::Cursed)){
-		auto CurseDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/CurseDice.CurseDice'"));
-		if (CurseDiceClass.Succeeded()) {
+		//auto CurseDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/CurseDice.CurseDice'"));
+		if (CurseDiceClass) {
 			FVector Loc = FVector(DiceRespawn->GetRelativeLocation().X, DiceRespawn->GetRelativeLocation().Y + 300, DiceRespawn->GetRelativeLocation().Z);
 			FRotator Rot = FRotator(UKismetMathLibrary::RandomFloatInRange(0.f, 360.f), UKismetMathLibrary::RandomFloatInRange(0.f, 360.f), UKismetMathLibrary::RandomFloatInRange(0.f, 360.f));
-			GetWorld()->SpawnActor<AActor>(CurseDiceClass.Class, Loc, Rot);
+			GetWorld()->SpawnActor<AActor>(CurseDiceClass, Loc, Rot);
 		}
 	}
 }

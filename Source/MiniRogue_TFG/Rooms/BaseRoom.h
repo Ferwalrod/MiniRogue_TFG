@@ -56,8 +56,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION()
-	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)PURE_VIRTUAL(ABaseRoom::OnBeginOverlap,);
 	UFUNCTION(BlueprintCallable)
 	void EventFinishRoom();
 	

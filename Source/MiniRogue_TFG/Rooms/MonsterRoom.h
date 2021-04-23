@@ -16,6 +16,7 @@ class AMonsterBase;
 class APlayerController;
 class AActor;
 class UPrimitiveComponent;
+class ADice;
 
 UCLASS()
 class MINIROGUE_TFG_API AMonsterRoom : public ABaseRoom
@@ -57,6 +58,15 @@ public:
 	TSubclassOf<AMonsterBase> MonsterClass;
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dices")
+	TSubclassOf<ADice> PlayerDiceClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dices")
+	TSubclassOf<ADice> DungeonDiceClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dices")
+	TSubclassOf<ADice> PoisonDiceClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dices")
+	TSubclassOf<ADice> CurseDiceClass;
 public:
 	//Functions
 	virtual void Tick(float DeltaTime) override;
@@ -65,8 +75,9 @@ public:
 	void StartCombat();
 	void Check();
 	void PlayerTurn();
-	
-	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult) override ;
+
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnClickedButton(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);

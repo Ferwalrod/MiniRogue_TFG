@@ -6,6 +6,7 @@
 #include "MiniRogue_TFG/Characters/BaseCharacter.h"
 #include "Components/BoxComponent.h"
 #include "MiniRogue_TFG/MyGameInstance.h"
+#include "Engine/Engine.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Components/StaticMeshComponent.h"
@@ -32,7 +33,6 @@ ABaseRoom::ABaseRoom()
 	Scenery5->AttachTo(GetRootComponent());
 	Scenery6 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery6");
 	Scenery6->AttachTo(GetRootComponent());
-	RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::OnBeginOverlap);
 
 }
 
@@ -44,6 +44,7 @@ void ABaseRoom::BeginPlay()
 	GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	if (GI) {
 		IndexRoom = GI->RoomIndex;
+		FString Name;
 	}
 	
 }
