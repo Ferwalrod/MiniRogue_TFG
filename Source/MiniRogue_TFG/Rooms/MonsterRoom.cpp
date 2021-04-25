@@ -26,20 +26,31 @@
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "MiniRogue_TFG/Characters/RogueCharacter.h"
+#include "Engine/EngineTypes.h"
 #include "UObject/ConstructorHelpers.h"
 
 
 AMonsterRoom::AMonsterRoom() {
 	PrimaryActorTick.bCanEverTick = true;
+	//FAttachmentTransformRules AttachmentRules=FAttachmentTransformRules(EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,EAttachmentRule::SnapToTarget,true);
 	MonsterSpawned = CreateDefaultSubobject<UChildActorComponent>("MonsterSpawned");
-	MonsterSpawned->AttachTo(GetRootComponent());
+	//MonsterSpawned->AttachToComponent(RoomCollision,AttachmentRules);
+	MonsterSpawned->SetupAttachment(GetRootComponent());
+	MonsterSpawned->SetRelativeLocation(FVector(220.f, 0.f, 95.f));
+	MonsterSpawned->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
 	DiceRespawn = CreateDefaultSubobject<USphereComponent>("DiceRespawnPoint");
-	DiceRespawn->AttachTo(GetRootComponent());
+	//DiceRespawn->AttachTo(RoomCollision);
+	//DiceRespawn->AttachToComponent(RoomCollision,AttachmentRules);
+	DiceRespawn->SetupAttachment(GetRootComponent());
+	DiceRespawn->SetRelativeLocation(FVector(-145.f,200.f,375.f));
 	Plane = CreateDefaultSubobject<UStaticMeshComponent>("Plane");
-	Plane->AttachTo(GetRootComponent());
+	//Plane->AttachToComponent(RoomCollision,AttachmentRules);
+	Plane->SetupAttachment(GetRootComponent());
+	Plane->SetRelativeLocation(FVector(0.f,140.f,290.f));
 	Plane->OnClicked.AddDynamic(this, &AMonsterRoom::OnClickedButton);
 	Text = CreateDefaultSubobject<UTextRenderComponent>("TextRender");
-	Text->AttachTo(Plane);
+	//Text->AttachToComponent(Plane,AttachmentRules);
+	Text->SetupAttachment(Plane);
 	RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &AMonsterRoom::OnBeginOverlap);
 
 	/*auto PlayerDClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PlayerDice.PlayerDice'"));
@@ -136,7 +147,7 @@ void AMonsterRoom::Check()
 
 void AMonsterRoom::PlayerTurn()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, UKismetStringLibrary::Conv_BoolToString(Monster->IsDead));
+	
 	if (Monster->IsDead) {
 		CombatEnded = true;
 		Character->isInCombat = false;
@@ -154,14 +165,22 @@ void AMonsterRoom::PlayerTurn()
 	}
 	else {
 		if (GM->Results.Num() == ExpectedDices) {
-			Character->Health = Character->Health + *GM->Results.Find(EDiceType::Poison);
+			int poison = 0;
+			int curse = 0;
+			if (GM->Results.Find(EDiceType::Poison) != nullptr) {
+				poison = *GM->Results.Find(EDiceType::Poison);
+			}
+			if (GM->Results.Find(EDiceType::Curse) != nullptr) {
+				curse = *GM->Results.Find(EDiceType::Curse);
+			}
+			Character->Health = Character->Health + poison;
 			ARogueCharacter* Rogue1 = Cast<ARogueCharacter>(Character);
 			if (Rogue1 && Rogue1->BackStabActivated) {
-				Monster->Live = Monster->Live - (2*(*GM->Results.Find(EDiceType::Player)) + *GM->Results.Find(EDiceType::Curse));
+				Monster->Live = Monster->Live - (2*(*GM->Results.Find(EDiceType::Player)) +curse);
 				Rogue1->BackStabActivated=false;
 			}
 			else {
-				Monster->Live = Monster->Live - (*GM->Results.Find(EDiceType::Player) + *GM->Results.Find(EDiceType::Curse));
+				Monster->Live = Monster->Live - (*GM->Results.Find(EDiceType::Player) + curse);
 			}
 			Monster->UpdateMonsterState();
 			if (Monster->IsDead || Monster->Live <= 0) {
@@ -183,6 +202,7 @@ void AMonsterRoom::PlayerTurn()
 				if (Monster->IsMonsterFrozen) {
 					GM->Results.Empty(ExpectedDices);
 					//=========UPDATE CHARACTER HUD
+					Monster->IsMonsterFrozen = false;
 					DestroyDices();
 				}
 				else {
@@ -248,7 +268,6 @@ void AMonsterRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 
 	if (Player) {
 		Character = Player;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("HA CASTEADO EL PLAYER!"));
 		ARogueCharacter* Rogue = Cast<ARogueCharacter>(Player);
 		if (Rogue) {
 			if (Rogue->EvasionActivated) {
@@ -298,27 +317,30 @@ void AMonsterRoom::DestroyDices()
 	}
 	TArray<AActor*> poisonDices;
 	//auto PoisonDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PoisonDice.PoisonDice'"));
-	if (PoisonDiceClass) {
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), PoisonDiceClass, poisonDices);
-	}
-	if (poisonDices.Num() != 0) {
-		for (int k = 0; k < poisonDices.Num(); k++) {
-			poisonDices[k]->Destroy();
+	if (Character->States.Contains(ENegativeState::Poisoned)) {
+		if (PoisonDiceClass) {
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), PoisonDiceClass, poisonDices);
+		}
+		if (poisonDices.Num() != 0) {
+			for (int k = 0; k < poisonDices.Num(); k++) {
+				poisonDices[k]->Destroy();
+			}
 		}
 	}
 	TArray<AActor*> curseDices;
 	//auto CurseDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/CurseDice.CurseDice'"));
-	if (CurseDiceClass) {
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), CurseDiceClass, curseDices);
-	}
-	if (curseDices.Num() != 0) {
-		for (int w = 0; w < curseDices.Num(); w++) {
-			curseDices[w]->Destroy();
+	if (Character->States.Contains(ENegativeState::Cursed)) {
+		if (CurseDiceClass) {
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), CurseDiceClass, curseDices);
 		}
+		if (curseDices.Num() != 0) {
+			for (int w = 0; w < curseDices.Num(); w++) {
+				curseDices[w]->Destroy();
+			}
+		}
+		Plane->SetVisibility(true, true);
+		Controller->bEnableClickEvents = true;
 	}
-	Plane->SetVisibility(true, true);
-	Controller->bEnableClickEvents = true;
-	
 }
 
 void AMonsterRoom::LaunchDices()

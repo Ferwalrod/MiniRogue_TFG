@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 #include "Animation/AnimSequence.h"
 #include "MiniRogue_TFG/MyGameInstance.h"
+#include "MiniRogue_TFG/Widgets/MonsterState.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "Components/WidgetComponent.h"
 
@@ -16,6 +17,8 @@ AMonsterBase::AMonsterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	this->GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
+	HealthBar->SetupAttachment(GetRootComponent());
 
 }
 
@@ -45,14 +48,17 @@ void AMonsterBase::InitializeMonster()
 		AnimDead = EnemyLevel.AnimDead;
 		this->GetMesh()->SetAnimation(AnimIdle);
 		this->GetMesh()->SetMaterial(0,EnemyLevel.MonsterMat);
+		Live = EnemyLevel.Live;
 		Damage = EnemyLevel.Damage;
 		DamageType = EnemyLevel.DamageType;
 		Reward = EnemyLevel.Reward;
 		MonsterName = EnemyLevel.MonsterName;
 	}
 
-	//I need the widget c++ class to continue
-	//...
+	UMonsterState* MonsterState = Cast<UMonsterState>(HealthBar->GetUserWidgetObject());
+	if (MonsterState) {
+		MonsterState->SetMonsterOwner(this);
+	}
 }
 
 void AMonsterBase::UpdateMonsterState()

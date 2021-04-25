@@ -20,19 +20,19 @@ ABaseRoom::ABaseRoom()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	RoomCollision = CreateDefaultSubobject<UBoxComponent>("RoomCollision");
-	RoomCollision->AttachTo(GetRootComponent());
+	SetRootComponent(RoomCollision);
 	Scenery1 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery1");
-	Scenery1->AttachTo(GetRootComponent());
+	Scenery1->SetupAttachment(GetRootComponent());
 	Scenery2 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery2");
-	Scenery2->AttachTo(GetRootComponent());
+	Scenery2->SetupAttachment(GetRootComponent());
 	Scenery3 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery3");
-	Scenery3->AttachTo(GetRootComponent());
+	Scenery3->SetupAttachment(GetRootComponent());
 	Scenery4 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery4");
-	Scenery4->AttachTo(GetRootComponent());
+	Scenery4->SetupAttachment(GetRootComponent());
 	Scenery5 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery5");
-	Scenery5->AttachTo(GetRootComponent());
+	Scenery5->SetupAttachment(GetRootComponent());
 	Scenery6 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery6");
-	Scenery6->AttachTo(GetRootComponent());
+	Scenery6->SetupAttachment(GetRootComponent());
 
 }
 
