@@ -6,8 +6,10 @@
 #include "MiniRogue_TFG/Characters/BaseCharacter.h"
 #include "Components/BoxComponent.h"
 #include "MiniRogue_TFG/MyGameInstance.h"
+#include "Engine/Engine.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
+#include "Components/StaticMeshComponent.h"
 #include "MiniRogue_TFG/Characters/BaseCharacter.h"
 #include "MiniRogue_TFG/MiniRogue_TFGGameModeBase.h"
 
@@ -18,8 +20,19 @@ ABaseRoom::ABaseRoom()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	RoomCollision = CreateDefaultSubobject<UBoxComponent>("RoomCollision");
-	RoomCollision->AttachTo(GetRootComponent());
-	RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseRoom::OnBeginOverlap);
+	SetRootComponent(RoomCollision);
+	Scenery1 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery1");
+	Scenery1->SetupAttachment(GetRootComponent());
+	Scenery2 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery2");
+	Scenery2->SetupAttachment(GetRootComponent());
+	Scenery3 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery3");
+	Scenery3->SetupAttachment(GetRootComponent());
+	Scenery4 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery4");
+	Scenery4->SetupAttachment(GetRootComponent());
+	Scenery5 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery5");
+	Scenery5->SetupAttachment(GetRootComponent());
+	Scenery6 = CreateDefaultSubobject<UStaticMeshComponent>("Scenery6");
+	Scenery6->SetupAttachment(GetRootComponent());
 
 }
 
@@ -28,9 +41,10 @@ void ABaseRoom::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance());
+	GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 	if (GI) {
 		IndexRoom = GI->RoomIndex;
+		FString Name;
 	}
 	
 }
@@ -42,14 +56,6 @@ void ABaseRoom::Tick(float DeltaTime)
 
 }
 
-void ABaseRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)
-{
-	ABaseCharacter* BC = Cast<ABaseCharacter>(OtherActor);
-	if (BC) {
-		Character = BC;
-		RoomBehavior();
-	}
-}
 
 void ABaseRoom::EventFinishRoom()
 {
