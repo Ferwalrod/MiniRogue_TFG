@@ -22,6 +22,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Engine/World.h"
+#include "Engine/Engine.h"
 #include "Kismet/GameplayStatics.h"
 #include "MiniRogue_TFG/Characters/RogueCharacter.h"
 #include "Engine/EngineTypes.h"
@@ -35,14 +36,10 @@ ABossRoom::ABossRoom() {
 
 	MonsterSpawned = CreateDefaultSubobject<UChildActorComponent>("MonsterSpawned");
 	MonsterSpawned->SetupAttachment(GetRootComponent());
-	MonsterSpawned->SetRelativeLocation(FVector(220.f, 0.f, 95.f));
-	MonsterSpawned->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
 	DiceRespawn = CreateDefaultSubobject<USphereComponent>("DiceRespawnPoint");
 	DiceRespawn->SetupAttachment(GetRootComponent());
-	DiceRespawn->SetRelativeLocation(FVector(-145.f, 200.f, 375.f));
 	Plane = CreateDefaultSubobject<UStaticMeshComponent>("Plane");
 	Plane->SetupAttachment(GetRootComponent());
-	Plane->SetRelativeLocation(FVector(0.f, 140.f, 290.f));
 	Plane->OnClicked.AddDynamic(this, &ABossRoom::OnClickedButton);
 	Text = CreateDefaultSubobject<UTextRenderComponent>("TextRender");
 	Text->SetupAttachment(Plane);
@@ -324,6 +321,7 @@ void ABossRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 			GetWorldTimerManager().SetTimer(Timer, this, &ABossRoom::Check, 0.3f, true);
 		}
 	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,(UKismetStringLibrary::Conv_BoolToString(Controller->bEnableClickEvents)));
 }
 
 void ABossRoom::OnLaddersOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)
@@ -426,9 +424,9 @@ void ABossRoom::DestroyDices()
 				curseDices[w]->Destroy();
 			}
 		}
-		Plane->SetVisibility(true, true);
-		Controller->bEnableClickEvents = true;
 	}
+	Plane->SetVisibility(true, true);
+	Controller->bEnableClickEvents = true;
 }
 
 void ABossRoom::LaunchDices()
