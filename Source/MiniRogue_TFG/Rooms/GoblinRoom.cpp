@@ -3,3 +3,15 @@
 
 #include "GoblinRoom.h"
 
+AGoblinRoom::AGoblinRoom() {
+	PrimaryActorTick.bCanEverTick = true;
+}
+void AGoblinRoom::BeginPlay()
+{
+	Super::AMonsterRoom::BeginPlay();
+}
+
+void AGoblinRoom::Tick(float DeltaTime)
+{
+	Super::AMonsterRoom::Tick(DeltaTime);
+}

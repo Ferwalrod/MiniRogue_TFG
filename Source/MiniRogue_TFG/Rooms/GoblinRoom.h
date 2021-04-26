@@ -13,5 +13,14 @@ UCLASS()
 class MINIROGUE_TFG_API AGoblinRoom : public AMonsterRoom
 {
 	GENERATED_BODY()
+
+public:
+	AGoblinRoom();
+
+protected:
+	virtual void BeginPlay() override;
+public:
+	virtual void Tick(float DeltaTime) override;
+
 	
 };
