@@ -49,6 +49,7 @@ void AMonsterBase::InitializeMonster()
 		this->GetMesh()->SetAnimation(AnimIdle);
 		this->GetMesh()->SetMaterial(0,EnemyLevel.MonsterMat);
 		Live = EnemyLevel.Live;
+		MaxMonsterLive = EnemyLevel.Live;
 		Damage = EnemyLevel.Damage;
 		DamageType = EnemyLevel.DamageType;
 		Reward = EnemyLevel.Reward;

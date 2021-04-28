@@ -49,8 +49,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget Components")
 	UTexture2D* NoArmor;
 public:
-	void NativeConstruct() override;
-	void NativeTick(const FGeometry& Geometry, float DeltaTime) override;
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& Geometry, float DeltaTime) override;
 
 
 	UFUNCTION()
@@ -59,7 +59,7 @@ public:
 	FText GetFloorText();
 	UFUNCTION()
 	FText GetDamageText();
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	float GetPercent();
 
 	void SetMonsterOwner(AMonsterBase* Owner);

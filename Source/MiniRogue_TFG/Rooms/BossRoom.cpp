@@ -161,11 +161,12 @@ void ABossRoom::Check()
 		ExpectedDices = 2;
 	}
 	if (CombatEnded) {
-		//====================Add Reward Widget HERE
+		//=======(TODO)=============Add Reward Widget HERE
 		GetWorldTimerManager().ClearTimer(Timer);
 		this->EventFinishRoom();
 		/*
 		* 
+		* (TODO)
 		I need the boss Reward UI
 
 		*/
@@ -177,12 +178,11 @@ void ABossRoom::PlayerTurn()
 	if (Monster->IsDead) {
 		CombatEnded = true;
 		Character->isInCombat = false;
-		//=========(HERE)==========Update the HUD
+		//====(TODO)=====(HERE)==========Update the HUD
 		GetWorldTimerManager().ClearTimer(CombatTimer);
 		DestroyDices();
 		Plane->SetVisibility(false, true);
 		Monster->GetMesh()->PlayAnimation(Monster->AnimDead, false);
-		//=====(HERE) SET VISIBILITY OF THE MONSTER HEALTH BAR
 		FLatentActionInfo info;
 		UKismetSystemLibrary::Delay(GetWorld(), 3.f, info);
 		Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
@@ -212,12 +212,11 @@ void ABossRoom::PlayerTurn()
 			if (Monster->IsDead || Monster->Live <= 0) {
 				CombatEnded = true;
 				Character->isInCombat = false;
-				//=========(HERE)==========Update the HUD
+				//===(TODO)======(HERE)==========Update the HUD
 				GetWorldTimerManager().ClearTimer(CombatTimer);
 				DestroyDices();
 				Plane->SetVisibility(false, true);
 				Monster->GetMesh()->PlayAnimation(Monster->AnimDead, false);
-				//=====(HERE) SET VISIBILITY OF THE MONSTER HEALTH BAR
 				FLatentActionInfo info;
 				UKismetSystemLibrary::Delay(GetWorld(), 3.f, info);
 				Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
@@ -227,7 +226,7 @@ void ABossRoom::PlayerTurn()
 			else {
 				if (Monster->IsMonsterFrozen) {
 					GM->Results.Empty(ExpectedDices);
-					//=========UPDATE CHARACTER HUD
+					//====(TODO)=====UPDATE CHARACTER HUD
 					Monster->IsMonsterFrozen = false;
 					DestroyDices();
 				}
@@ -239,47 +238,47 @@ void ABossRoom::PlayerTurn()
 							Character->States.Add(ENegativeState::Poisoned);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							//====(TODO)=====UPDATE CHARACTER HUD
 							DestroyDices();
 							break;
 						case EAttackState::CurseAttack:
 							Character->States.Add(ENegativeState::Cursed);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							//====(TODO)=====UPDATE CHARACTER HUD
 							DestroyDices();
 							break;
 						case EAttackState::BlindAttack:
 							Character->States.Add(ENegativeState::Blinded);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							//====(TODO)=====UPDATE CHARACTER HUD
 							DestroyDices();
 							break;
 						case EAttackState::WeaknessAttack:
 							Character->Exp--;
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							//====(TODO)=====UPDATE CHARACTER HUD
 							DestroyDices();
 							break;
 						case EAttackState::NoArmorAttack:
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							//====(TODO)=====UPDATE CHARACTER HUD
 							DestroyDices();
 							break;
 						case EAttackState::NoneStateAttack:
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							//===(TODO)======UPDATE CHARACTER HUD
 							DestroyDices();
 							break;
 						}
 					}
 					else {
 						GM->Results.Empty(ExpectedDices);
-						//=========UPDATE CHARACTER HUD
+						//===(TODO)======UPDATE CHARACTER HUD
 						DestroyDices();
 					}
 				}
@@ -310,14 +309,14 @@ void ABossRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 			else {
 				this->RoomBehavior();
 				Character->isInCombat = true;
-				//=======================Update the HUD
+				//========(TODO)===============Update the HUD
 				GetWorldTimerManager().SetTimer(Timer, this, &ABossRoom::Check, 0.3f, true);
 			}
 		}
 		else {
 			this->RoomBehavior();
 			Character->isInCombat = true;
-			//=======================Update the HUD
+			//==========(TODO)=============Update the HUD
 			GetWorldTimerManager().SetTimer(Timer, this, &ABossRoom::Check, 0.3f, true);
 		}
 	}
@@ -343,14 +342,14 @@ void ABossRoom::OnLaddersOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 			ARogueCharacter* Rogue = Cast<ARogueCharacter>(Character);
 			if (Rogue) {
 				Rogue->SkillUsed = false;
-				//==============Update player HUD
+				//=======(TODO)=======Update player HUD
 			}
 			else {
-				//==============Update player HUD
+				//=======(TODO)=======Update player HUD
 			}
 			/*
-			===========SAVE PLAYER DATA
-			=========== OPEN NEXT LEVEL
+			=======(TODO)====SAVE PLAYER DATA
+			======(TODO)===== OPEN NEXT LEVEL
 			*/
 		}
 		else {
@@ -365,14 +364,14 @@ void ABossRoom::OnLaddersOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 			ARogueCharacter* Rogue = Cast<ARogueCharacter>(Character);
 			if (Rogue) {
 				Rogue->SkillUsed = false;
-				//==============Update player HUD
+				//====(TODO)==========Update player HUD
 			}
 			else {
-				//==============Update player HUD
+				//======(TODO)========Update player HUD
 			}
 			/*
-			===========SAVE PLAYER DATA
-			=========== OPEN NEXT LEVEL
+			=====(TODO)======SAVE PLAYER DATA
+			=======(TODO)==== OPEN NEXT LEVEL
 			*/
 		}
 	}
