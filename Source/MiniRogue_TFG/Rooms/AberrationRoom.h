@@ -3,23 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MiniRogue_TFG/Rooms/MonsterRoom.h"
-#include "UndeadRoom.generated.h"
+#include "MiniRogue_TFG/Rooms/BossRoom.h"
+#include "AberrationRoom.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MINIROGUE_TFG_API AUndeadRoom : public AMonsterRoom
+class MINIROGUE_TFG_API AAberrationRoom : public ABossRoom
 {
 	GENERATED_BODY()
 
 public:
-	AUndeadRoom();
+	AAberrationRoom();
 
 protected:
 	virtual void BeginPlay() override;
 public:
 	virtual void Tick(float DeltaTime) override;
+
 	
 };

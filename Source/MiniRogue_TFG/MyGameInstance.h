@@ -34,6 +34,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
 	AMonsterBase* ActMonster;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
+	AMonsterBase* ActBoss;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
+	bool IsANewFloor;
 
 	void PassLevel();
 	void PassFloor();

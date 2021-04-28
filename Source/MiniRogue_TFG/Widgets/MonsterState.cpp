@@ -7,6 +7,8 @@
 #include "Components/TextBlock.h"
 #include "Kismet/KismetTextLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
+#include "Engine/Engine.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "MiniRogue_TFG/Enumerates/AttackState.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UObject/ConstructorHelpers.h"
@@ -17,6 +19,7 @@
 
 void UMonsterState::NativeConstruct()
 {
+	Super::NativeConstruct();
 	
 	/*auto picture = ConstructorHelpers::FObjectFinder<UTexture2D>(TEXT("Texture2D'/Game/Textures/states/poison_picture.poison_picture'"));
 	if (picture.Succeeded()) {
@@ -44,8 +47,12 @@ void UMonsterState::NativeConstruct()
 
 void UMonsterState::NativeTick(const FGeometry& Geometry, float DeltaTime)
 {
+	Super::NativeTick(Geometry, DeltaTime);
+
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("IS DOING NATIVE TICK"));
 	if (Monster) {
 		ProgressBar_106->SetPercent(GetPercent());
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Porcentaje de vida: %f"),(GetPercent())));
 	}
 }
 
@@ -66,8 +73,8 @@ FText UMonsterState::GetDamageText()
 
 float UMonsterState::GetPercent()
 {
-	float live = Monster->Live;
-	float MaxLive = Monster->MaxMonsterLive;
+	float live = UKismetMathLibrary::Conv_IntToFloat(Monster->Live);
+	float MaxLive = UKismetMathLibrary::Conv_IntToFloat(Monster->MaxMonsterLive);
 	return live / MaxLive;
 }
 
@@ -111,5 +118,6 @@ void UMonsterState::SetMonsterOwner(AMonsterBase* Owner)
 	Name_Text->SetText(GetNameText());
 	Floor->SetText(GetFloorText());
 	Damage_text->SetText(GetDamageText());
+	ProgressBar_106->SetPercent(GetPercent());
 
 }
