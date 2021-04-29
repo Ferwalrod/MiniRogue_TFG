@@ -44,9 +44,11 @@ public:
 		UWidgetComponent* Message;
 
 	//Attributes
-
+	UPROPERTY()
 	FTimerHandle CheckTimer;
+	UPROPERTY()
 	FTimerHandle CombatTimer;
+	UPROPERTY()
 	FTimerHandle SearchTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")

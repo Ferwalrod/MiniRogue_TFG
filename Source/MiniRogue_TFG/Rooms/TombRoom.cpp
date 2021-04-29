@@ -28,6 +28,9 @@
 #include "MiniRogue_TFG/Characters/RogueCharacter.h"
 #include "Engine/EngineTypes.h"
 #include "UObject/ConstructorHelpers.h"
+#include "MiniRogue_TFG/Widgets/TombMessage.h"
+#include "MiniRogue_TFG/HolyPotion.h"
+#include "MiniRogue_TFG/PotionObject.h"
 
 ATombRoom::ATombRoom() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -47,6 +50,8 @@ ATombRoom::ATombRoom() {
 	Text2 = CreateDefaultSubobject<UTextRenderComponent>("Combat Text");
 	Text2->SetupAttachment(Combat_Button);
 	RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &ATombRoom::OnBeginOverlap);
+	Message = CreateDefaultSubobject<UWidgetComponent>("Message");
+	Message->SetupAttachment(GetRootComponent());
 }
 void ATombRoom::BeginPlay()
 {
@@ -113,26 +118,316 @@ void ATombRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 
 void ATombRoom::OnClickedSearchButton(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
 {
+	LaunchDicesForSearch();
 }
 
 void ATombRoom::OnClickedCombatButton(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
 {
+	LaunchDicesForCombat();
 }
 
 void ATombRoom::Check()
 {
+	if (Character->States.Contains(ENegativeState::Poisoned) && Character->States.Contains(ENegativeState::Cursed)) {
+		ExpectedDices = 4;
+	}
+	else if (Character->States.Contains(ENegativeState::Poisoned)) {
+		ExpectedDices = 3;
+	}
+	else if (Character->States.Contains(ENegativeState::Cursed)) {
+		ExpectedDices = 3;
+	}
+	else {
+		ExpectedDices = 2;
+	}
+	if (CombatEnded || FinishedRoom) {
+		GetWorldTimerManager().ClearTimer(CheckTimer);
+		this->EventFinishRoom();
+	}
 }
 
 void ATombRoom::WaitForSearchResults()
 {
+	if (GM->Results.Num() == 2) {
+		GetWorldTimerManager().ClearTimer(SearchTimer);
+		FLatentActionInfo info;
+		info.Linkage = 0;
+		info.CallbackTarget = this;
+		UKismetSystemLibrary::Delay(GetWorld(), 1.f, info);
+		if (Character->PositiveStates.Contains(EPositiveState::Perceptive)) {
+			Character->PositiveStates.Remove(Character->PositiveStates.FindId(EPositiveState::Perceptive));
+			IsSuccess = true;
+		}
+		else {
+			TArray<AActor*> playerDices;
+			//auto PlayerDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PlayerDice.PlayerDice'"));
+			if (PlayerDiceClass) {
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), PlayerDiceClass, playerDices);
+			}
+			if (playerDices.Num() != 0) {
+				for (int i = 0; i < playerDices.Num(); i++) {
+					ADice* Dice = Cast<ADice>(playerDices[i]);
+					if (Dice) {
+						if (*Dice->ValueMapping.Find(Dice->FaceShowing) >= 5) {
+							IsSuccess = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (IsSuccess) {
+			TArray<AActor*> dungeonDices;
+			//auto DungeonDiceClass= ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/DungeonDice.DungeonDice''"));
+			if (DungeonDiceClass) {
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), DungeonDiceClass, dungeonDices);
+			}
+			if (dungeonDices.Num() != 0) {
+				ADice* DungeonDice = Cast<ADice>(dungeonDices[0]);
+				if (DungeonDice) {
+					UTombMessage* TombMessage = Cast<UTombMessage>(Message->GetUserWidgetObject());
+					switch (*DungeonDice->ValueMapping.Find(DungeonDice->FaceShowing)) {
+					case 1:
+						if (Character->Potions.Num() < 2 && !Character->Potions.Contains(AHolyPotion::StaticClass())) {
+							Character->Potions.Add(AHolyPotion::StaticClass());
+							Message->SetVisibility(true, true);
+							if (TombMessage) {
+								TombMessage->Message_Text = FText::FromString("+1 Holy Water");
+							}
+							UKismetSystemLibrary::Delay(GetWorld(), 2.f, info);
+							Message->SetVisibility(false, true);
+							EventFinishRoom();
+							Controller->bEnableClickEvents = true;
+							DestroyDicesForSearch();
+							GM->Results.Empty();
+							//===(TODO)======= UPDATE CHARACTER HUD
+						}
+						break;
+					case 2:
+						Character->Food = UKismetMathLibrary::Clamp(Character->Food++, 0, Character->MaxFood);
+						Message->SetVisibility(true, true);
+						if (TombMessage) {
+							TombMessage->Message_Text = FText::FromString("+1 Food");
+						}
+						UKismetSystemLibrary::Delay(GetWorld(), 2.f, info);
+						Message->SetVisibility(false, true);
+						EventFinishRoom();
+						Controller->bEnableClickEvents = true;
+						DestroyDicesForSearch();
+						GM->Results.Empty();
+						//===(TODO)======= UPDATE CHARACTER HUD
+						break;
+					case 3:
+						Character->Gold = UKismetMathLibrary::Clamp(Character->Gold++, 0, Character->MaxGold);
+						Message->SetVisibility(true, true);
+						if (TombMessage) {
+							TombMessage->Message_Text = FText::FromString("+1 Gold");
+						}
+						UKismetSystemLibrary::Delay(GetWorld(), 2.f, info);
+						Message->SetVisibility(false, true);
+						EventFinishRoom();
+						Controller->bEnableClickEvents = true;
+						DestroyDicesForSearch();
+						GM->Results.Empty();
+						//===(TODO)======= UPDATE CHARACTER HUD
+						break;
+					case 4:
+						Character->Exp = UKismetMathLibrary::Clamp(Character->Exp++, 0, Character->MaxGold);
+						Message->SetVisibility(true, true);
+						if (TombMessage) {
+							TombMessage->Message_Text = FText::FromString("+1 Experience");
+						}
+						UKismetSystemLibrary::Delay(GetWorld(), 2.f, info);
+						Message->SetVisibility(false, true);
+						EventFinishRoom();
+						Controller->bEnableClickEvents = true;
+						DestroyDicesForSearch();
+						GM->Results.Empty();
+						//===(TODO)======= UPDATE CHARACTER HUD
+						break;
+					case 5:
+						Character->Food = UKismetMathLibrary::Clamp(Character->Food--, 0, Character->MaxFood);
+						Message->SetVisibility(true, true);
+						if (TombMessage) {
+							TombMessage->Message_Text = FText::FromString("-1 Food");
+						}
+						UKismetSystemLibrary::Delay(GetWorld(), 2.f, info);
+						Message->SetVisibility(false, true);
+						EventFinishRoom();
+						Controller->bEnableClickEvents = true;
+						DestroyDicesForSearch();
+						GM->Results.Empty();
+						//===(TODO)======= UPDATE CHARACTER HUD
+						break;
+					case 6:
+						StartCombat();
+						Message->SetVisibility(true, true);
+						if (TombMessage) {
+							TombMessage->Message_Text = FText::FromString("Ghost appeared");
+						}
+						UKismetSystemLibrary::Delay(GetWorld(), 2.f, info);
+						Message->SetVisibility(false, true);
+						DestroyDicesForSearch();
+						GM->Results.Empty(ExpectedDices);
+						//====(TODO)===== UPDATE CHARACTER HUD
+						break;
+					}
+
+				}
+			}
+
+		}
+		else {
+			FinishedRoom = true;
+			Controller->bEnableClickEvents = true;
+			Message->SetVisibility(true, true);
+			UTombMessage* TombMessage = Cast<UTombMessage>(Message->GetUserWidgetObject());
+			if (TombMessage) {
+				TombMessage->Message_Text=FText::FromString("Better luck next time");
+			}
+			FLatentActionInfo info7;
+			UKismetSystemLibrary::Delay(GetWorld(), 2.f, info7);
+			Message->SetVisibility(false, true);
+			DestroyDicesForSearch();
+			GM->Results.Empty();
+			//===(TODO)======= UPDATE CHARACTER HUD
+		}
+	}
 }
 
 void ATombRoom::StartCombat()
 {
+	Text1->SetVisibility(true, true);
+	Combat_Button->SetVisibility(true, true);
+	MonsterSpawned->SetChildActorClass(MonsterClass);
+	MonsterSpawned->CreateChildActor();
+	AMonsterBase* MonsterCasted = Cast<AMonsterBase>(MonsterSpawned->GetChildActor());
+	if (MonsterCasted) {
+		MonsterCasted->InitializeMonster();
+		Monster = MonsterCasted;
+
+
+		GI->ActMonster = MonsterCasted;
+		this->GetPlayerLevel(Character);
+	}
+	GetWorldTimerManager().SetTimer(CombatTimer, this, &ATombRoom::PlayerTurn, 0.4f, true);
+
 }
 
 void ATombRoom::PlayerTurn()
 {
+	if (Monster->IsDead) {
+		CombatEnded = true;
+		Character->isInCombat = false;
+		//=========(HERE)==========Update the HUD
+		GetWorldTimerManager().ClearTimer(CombatTimer);
+		DestroyDicesForCombat();
+		Combat_Button->SetVisibility(false, true);
+		Monster->GetMesh()->PlayAnimation(Monster->AnimDead, false);
+		//=====(HERE) SET VISIBILITY OF THE MONSTER HEALTH BAR
+		FLatentActionInfo info8;
+		UKismetSystemLibrary::Delay(GetWorld(), 3.f, info8);
+		Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
+		MonsterSpawned->SetChildActorClass(nullptr);
+		MonsterSpawned->CreateChildActor();
+	}
+	else {
+		if (GM->Results.Num() == ExpectedDices) {
+			int poison = 0;
+			int curse = 0;
+			if (GM->Results.Find(EDiceType::Poison) != nullptr) {
+				poison = *GM->Results.Find(EDiceType::Poison);
+			}
+			if (GM->Results.Find(EDiceType::Curse) != nullptr) {
+				curse = *GM->Results.Find(EDiceType::Curse);
+			}
+			Character->Health = Character->Health + poison;
+			ARogueCharacter* Rogue1 = Cast<ARogueCharacter>(Character);
+			if (Rogue1 && Rogue1->BackStabActivated) {
+				Monster->Live = Monster->Live - (2 * (*GM->Results.Find(EDiceType::Player)) + curse);
+				Rogue1->BackStabActivated = false;
+			}
+			else {
+				Monster->Live = Monster->Live - (*GM->Results.Find(EDiceType::Player) + curse);
+			}
+			Monster->UpdateMonsterState();
+			if (Monster->IsDead || Monster->Live <= 0) {
+				CombatEnded = true;
+				Character->isInCombat = false;
+				//=========(HERE)==========Update the HUD
+				GetWorldTimerManager().ClearTimer(CombatTimer);
+				DestroyDicesForCombat();
+				Combat_Button->SetVisibility(false, true);
+				Monster->GetMesh()->PlayAnimation(Monster->AnimDead, false);
+				//=====(HERE) SET VISIBILITY OF THE MONSTER HEALTH BAR
+				FLatentActionInfo info9;
+				UKismetSystemLibrary::Delay(GetWorld(), 3.f, info9);
+				Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
+				MonsterSpawned->SetChildActorClass(nullptr);
+				MonsterSpawned->CreateChildActor();
+			}
+			else {
+				if (Monster->IsMonsterFrozen) {
+					GM->Results.Empty(ExpectedDices);
+					//=========UPDATE CHARACTER HUD
+					Monster->IsMonsterFrozen = false;
+					DestroyDicesForCombat();
+				}
+				else {
+					Monster->GetMesh()->PlayAnimation(Monster->AnimCombat, false);
+					if (*GM->Results.Find(EDiceType::Dungeon) != 1) {
+						switch (Monster->DamageType) {
+						case EAttackState::PoisonAttack:
+							Character->States.Add(ENegativeState::Poisoned);
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDicesForCombat();
+							break;
+						case EAttackState::CurseAttack:
+							Character->States.Add(ENegativeState::Cursed);
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDicesForCombat();
+							break;
+						case EAttackState::BlindAttack:
+							Character->States.Add(ENegativeState::Blinded);
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDicesForCombat();
+							break;
+						case EAttackState::WeaknessAttack:
+							Character->Exp--;
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDicesForCombat();
+							break;
+						case EAttackState::NoArmorAttack:
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDicesForCombat();
+							break;
+						case EAttackState::NoneStateAttack:
+							Character->TakeDamageCpp(Monster->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//=========UPDATE CHARACTER HUD
+							DestroyDicesForCombat();
+							break;
+						}
+					}
+					else {
+						GM->Results.Empty(ExpectedDices);
+						//=========UPDATE CHARACTER HUD
+						DestroyDicesForCombat();
+					}
+				}
+			}
+		}
+	}
 }
 
 void ATombRoom::LaunchDicesForSearch()
