@@ -96,6 +96,31 @@ void UMerchant::NativeConstruct() {
 	Sell_Poison_potion_Button->OnHovered.AddDynamic(this, &UMerchant::OnHovered_Sell_Poison_potion_Button);
 	Sell_Poison_potion_Button->OnUnhovered.AddDynamic(this, &UMerchant::OnUnhovered_Sell_Poison_potion_Button);
 
+	DescriptionTexts.Init(FText::FromString(""), 24);
+	DescriptionTexts[0] = FText::FromString("Recupera 1 de vida por 1 de oro");
+	DescriptionTexts[1] = FText::FromString("Compra 1 de comida por 2 de oro");
+	DescriptionTexts[2] = FText::FromString("Cura todos tus estados por 2 de oro");
+	DescriptionTexts[3] = FText::FromString("Recupera 4 de vida por 3 de oro");
+	DescriptionTexts[4] = FText::FromString("Compra 1 de armadura por 5 de oro");
+	DescriptionTexts[5] = FText::FromString("Vende 1 de armadura por 3 de oro");
+	DescriptionTexts[6] = FText::FromString("Compra una pocion de fuego por 5 de oro ");
+	DescriptionTexts[7] = FText::FromString("Compra una pocion de hielo por 5 de oro ");
+	DescriptionTexts[8] = FText::FromString("Compra una pocion de salud por 5 de oro ");
+	DescriptionTexts[9] = FText::FromString("Compra una pocion de agua bendita por 5 de oro");
+	DescriptionTexts[10] = FText::FromString("Compra una pocion de percepcion por 5 de oro ");
+	DescriptionTexts[11] = FText::FromString("Compra una pocion de veneno por 5 de oro ");
+	DescriptionTexts[12] = FText::FromString("Vende una pocion de fuego por 3 de oro");
+	DescriptionTexts[13] = FText::FromString("Vende una pocion de hielo por 3 de oro");
+	DescriptionTexts[14] = FText::FromString("Vende una pocion de salud por 3 de oro ");
+	DescriptionTexts[15] = FText::FromString("Vende una pocion de agua bendita por 3 de oro");
+	DescriptionTexts[16] = FText::FromString("Vende una pocion de percepcion por 3 de oro ");
+	DescriptionTexts[17] = FText::FromString("Vende una pocion de veneno por 3 de oro ");
+	DescriptionTexts[18] = FText::FromString("No tienes suficiente oro");
+	DescriptionTexts[19] = FText::FromString("No tienes armadura para vender");
+	DescriptionTexts[20] = FText::FromString("Tienes el máximo de pociones permitidas");
+	DescriptionTexts[21] = FText::FromString("Ya tienes esa pocion");
+	DescriptionTexts[22] = FText::FromString("No tienes esa pocion");
+	DescriptionTexts[23] = FText::FromString("Ya tienes la maxima cantidad de oro");
 
 }
 void UMerchant::NativeTick(const FGeometry& Geometry, float DeltaTime)

@@ -104,7 +104,7 @@ public:
 	//Attributes
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-	TArray<FText> DescriptionTexts;
+		TArray<FText> DescriptionTexts;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	FText DescriptionText;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
