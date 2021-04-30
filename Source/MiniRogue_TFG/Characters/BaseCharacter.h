@@ -96,6 +96,8 @@ public:
 	void OnClickedRightArrow(UPrimitiveComponent* TouchedComponent,FKey buttonPresed);
 	UFUNCTION()
 	void OnClickedBottomArrow(UPrimitiveComponent* TouchedComponent, FKey buttonPresed);
+	UFUNCTION(BlueprintCallable)
+	void SetupPlayer();
 
 	void Debug();
 
