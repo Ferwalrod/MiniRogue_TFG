@@ -10,6 +10,7 @@
 #include "MiniRogue_TFG/Widgets/MonsterState.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "Components/WidgetComponent.h"
+#include "MiniRogue_TFG/Widgets/OgState.h"
 
 // Sets default values
 AOgRemains::AOgRemains()
@@ -67,6 +68,10 @@ void AOgRemains::InitializePhase1()
 	DamageType = Level.DamageType;
 	Reward = Level.Reward;
 	MonsterName = Level.MonsterName;
+	UOgState* MonsterState = Cast<UOgState>(HealthBar->GetUserWidgetObject());
+	if (MonsterState) {
+		MonsterState->SetMonsterOwner(this);
+	}
 }
 
 void AOgRemains::InitializePhase2()
@@ -86,6 +91,10 @@ void AOgRemains::InitializePhase2()
 	DamageType = Level.DamageType;
 	Reward = Level.Reward;
 	MonsterName = Level.MonsterName;
+	UOgState* MonsterState = Cast<UOgState>(HealthBar->GetUserWidgetObject());
+	if (MonsterState) {
+		MonsterState->UpdateWidget();
+	}
 }
 
 // Called to bind functionality to input

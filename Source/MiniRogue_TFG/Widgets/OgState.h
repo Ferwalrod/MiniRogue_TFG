@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "OgState.generated.h"
 
-class AMonsterBase;
+class AOgRemains;
 class UImage;
 class UTextBlock;
 class UProgressBar;
@@ -23,7 +23,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UProgressBar* ProgressBar_106;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget Components")
-		AMonsterBase* Monster;
+		AOgRemains* Og;
 	UPROPERTY(meta = (BindWidget))
 		UImage* damage_type;
 	UPROPERTY(BlueprintReadWrite)
@@ -32,7 +32,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* Name_Text;
 	UPROPERTY(meta = (BindWidget))
-		UTextBlock* Floor;
+		UTextBlock* Phase;
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* Damage_text;
 
@@ -54,12 +54,13 @@ public:
 	UFUNCTION()
 		FText GetNameText();
 	UFUNCTION()
-		FText GetFloorText();
+		FText GetPhaseText();
 	UFUNCTION()
 		FText GetDamageText();
 	UFUNCTION(BlueprintCallable)
 		float GetPercent();
 
-	void SetMonsterOwner(AMonsterBase* Owner);
+	void SetMonsterOwner(AOgRemains* Owner);
+	void UpdateWidget();
 	
 };

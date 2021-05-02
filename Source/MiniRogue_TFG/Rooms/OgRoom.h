@@ -19,6 +19,8 @@ class APlayerController;
 class AActor;
 class UPrimitiveComponent;
 class ADice;
+class UWonScreen;
+class AOgRemains;
 
 UCLASS()
 class MINIROGUE_TFG_API AOgRoom : public ABaseRoom
@@ -39,6 +41,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		UBoxComponent* Ladders;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UWonScreen> WonScreenClass;
+
 	//Attributes
 	FTimerHandle CombatTimer;
 	FTimerHandle Timer;
@@ -58,7 +63,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 		int PlayerLevel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-		TSubclassOf<AMonsterBase> MonsterClass;
+		TSubclassOf<AOgRemains> MonsterClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 		bool IsFinalLevel;
 protected:

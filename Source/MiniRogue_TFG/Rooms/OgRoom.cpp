@@ -6,12 +6,16 @@
 #include "MiniRogue_TFG/Characters/BaseCharacter.h"
 #include "MiniRogue_TFG/Characters/MonsterBase.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
+#include "MiniRogue_TFG/Rooms/BaseRoom.h"
 #include "Animation/AnimSequence.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 #include "MiniRogue_TFG/MiniRogue_TFGGameModeBase.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/Engine.h"
+#include "MiniRogue_TFG/Characters/OgRemains.h"
+#include "MiniRogue_TFG/Widgets/WonScreen.h"
+#include "MiniRogue_TFG/Widgets/OgState.h"
 #include "MiniRogue_TFG/Characters/OgRemains.h"
 //#include "Engine/Blueprint.h"
 #include "MiniRogue_TFG/Dice.h"
@@ -112,20 +116,120 @@ void AOgRoom::Check()
 		ExpectedDices = 2;
 	}
 	if (CombatEnded) {
-		//=======(TODO)=============Add Reward Widget HERE
 		GetWorldTimerManager().ClearTimer(Timer);
 		this->EventFinishRoom();
-		/*
-		*
-		* (TODO)
-		I need the boss Reward UI
-
-		*/
+		
 	}
 }
 
 void AOgRoom::PlayerTurn()
 {
+	if (FinalBoss->IsDead) {
+		if (FinalBoss->PhaseNumber == 2) {
+			CombatEnded = true;
+			GetWorldTimerManager().ClearTimer(CombatTimer);
+			DestroyDices();
+			Plane->SetVisibility(false, true);
+			FinalBoss->GetMesh()->PlayAnimation(FinalBoss->AnimDead, false);
+			FLatentActionInfo info;
+			info.CallbackTarget = this;
+			info.Linkage = 0;
+			UKismetSystemLibrary::Delay(GetWorld(), 3.f, info);
+			MonsterSpawned->SetChildActorClass(nullptr);
+			MonsterSpawned->CreateChildActor();
+			Controller->bEnableClickEvents = false;
+			Character->RightArrowVisibility = false;
+			Character->BottomArrowVisibility = false;
+			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, Ladders->GetRelativeLocation());
+
+		}
+		else {
+			FinalBoss->InitializePhase2();
+			GM->Results.Empty(ExpectedDices);
+			DestroyDices();
+		}
+	}
+	else {
+		if (GM->Results.Num() == ExpectedDices) {
+			int poison = 0;
+			int curse = 0;
+			if (GM->Results.Find(EDiceType::Poison) != nullptr) {
+				poison = *GM->Results.Find(EDiceType::Poison);
+			}
+			if (GM->Results.Find(EDiceType::Curse) != nullptr) {
+				curse = *GM->Results.Find(EDiceType::Curse);
+			}
+			Character->Health = Character->Health + poison;
+			ARogueCharacter* Rogue1 = Cast<ARogueCharacter>(Character);
+			if (Rogue1 && Rogue1->BackStabActivated) {
+				FinalBoss->Live = FinalBoss->Live - (2 * (*GM->Results.Find(EDiceType::Player)) + curse);
+				Rogue1->BackStabActivated = false;
+			}
+			else {
+				FinalBoss->Live = FinalBoss->Live - (*GM->Results.Find(EDiceType::Player) + curse);
+			}
+			FinalBoss->UpdateOgState();
+			if (FinalBoss->IsDead || FinalBoss->Live <= 0) {
+				if (FinalBoss->PhaseNumber == 2) {
+					CombatEnded = true;
+					GetWorldTimerManager().ClearTimer(CombatTimer);
+					DestroyDices();
+					Plane->SetVisibility(false, true);
+				    FinalBoss->GetMesh()->PlayAnimation(FinalBoss->AnimDead, false);
+					FLatentActionInfo info;
+					info.CallbackTarget = this;
+					info.Linkage = 0;
+		            UKismetSystemLibrary::Delay(GetWorld(), 3.f, info);
+					MonsterSpawned->SetChildActorClass(nullptr);
+					MonsterSpawned->CreateChildActor();
+					Controller->bEnableClickEvents = false;
+					Character->RightArrowVisibility = false;
+					Character->BottomArrowVisibility = false;
+					UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, Ladders->GetRelativeLocation());
+
+				}
+				else {
+					FinalBoss->InitializePhase2();
+					GM->Results.Empty(ExpectedDices);
+					DestroyDices();
+				}
+			}
+			else {
+				if (FinalBoss->IsMonsterFrozen) {
+					GM->Results.Empty(ExpectedDices);
+					//====(TODO)=====UPDATE CHARACTER HUD
+					FinalBoss->IsMonsterFrozen = false;
+					DestroyDices();
+				}
+				else {
+					FinalBoss->GetMesh()->PlayAnimation(FinalBoss->AnimCombat, false);
+					if (*GM->Results.Find(EDiceType::Dungeon) != 1) {
+						switch (FinalBoss->DamageType) {
+						case EAttackState::PoisonAttack:
+							Character->States.Add(ENegativeState::Poisoned);
+							Character->TakeDamageCpp(FinalBoss->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//====(TODO)=====UPDATE CHARACTER HUD
+							DestroyDices();
+							break;
+						case EAttackState::CurseAttack:
+							Character->States.Add(ENegativeState::Cursed);
+							Character->TakeDamageCpp(FinalBoss->Damage);
+							GM->Results.Empty(ExpectedDices);
+							//====(TODO)=====UPDATE CHARACTER HUD
+							DestroyDices();
+							break;
+						}
+					}
+					else {
+						GM->Results.Empty(ExpectedDices);
+						//===(TODO)======UPDATE CHARACTER HUD
+						DestroyDices();
+					}
+				}
+			}
+		}
+	}
 }
 
 void AOgRoom::StartCombat()
@@ -156,6 +260,28 @@ void AOgRoom::OnClickedButton(UPrimitiveComponent* TouchedComponent, FKey Button
 
 void AOgRoom::OnLaddersOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)
 {
+	ABaseCharacter* Player = Cast<ABaseCharacter>(OtherActor);
+	if (Player) {
+		GetWorldTimerManager().ClearTimer(Timer);
+		if (IsFinalLevel) {
+			CreateWidget<UWonScreen>(Controller, WonScreenClass)->AddToViewport();
+		}
+		else {
+			if (Character->Food != 0) {
+				Character->Food--;
+			}
+			else {
+				Character->Health -= 3;
+			}
+			GI->LevelIndex++;
+			GI->RoomIndex = 0;
+			
+			/*
+			=====(TODO)======SAVE PLAYER DATA
+			=======(TODO)==== OPEN NEXT LEVEL
+			*/
+		}
+	}
 }
 
 void AOgRoom::DestroyDices()
