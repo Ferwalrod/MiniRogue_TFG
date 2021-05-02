@@ -30,12 +30,9 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Entra en begin play"));
 }
 
 void ABaseCharacter::SetupPlayer() {
-
-	UE_LOG(LogTemp, Warning, TEXT("Entra en initializeplayer"));
 
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
 	GetWorldTimerManager().SetTimer(Timer, this, &ABaseCharacter::CheckArrowVisibilities, 1.f, true);
