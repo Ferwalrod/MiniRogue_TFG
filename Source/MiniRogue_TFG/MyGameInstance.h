@@ -38,6 +38,9 @@ public:
 	AMonsterBase* ActBoss;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
 	bool IsANewFloor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
+		TArray<int> VisitedRooms;
+
 
 	void PassLevel();
 	void PassFloor();
