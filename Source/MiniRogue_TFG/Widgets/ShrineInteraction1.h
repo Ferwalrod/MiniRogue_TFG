@@ -13,6 +13,7 @@ class USphereComponent;
 class UImage;
 class ABaseCharacter;
 class UButton;
+class UShrineInteraction2;
 
 UCLASS()
 class MINIROGUE_TFG_API UShrineInteraction1 : public UUserWidget
@@ -38,11 +39,15 @@ public:
 		ADice* DungeonDice;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 		ABaseCharacter* PlayerCharacter;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Classes")
 		TSubclassOf<ADice> DiceClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Classes")
+		TSubclassOf<UShrineInteraction2> SecondInteractionClass;
+
 
 	USphereComponent* RespawnPoint;
-
 	FTimerHandle Timer;
 
 	virtual void NativeConstruct() override;

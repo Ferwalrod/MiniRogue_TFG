@@ -3,10 +3,12 @@
 
 #include "ShrineRoom.h"
 #include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 #include "MiniRogue_TFG/Characters/BaseCharacter.h"
 #include "MiniRogue_TFG/Characters/RogueCharacter.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/Engine.h"
 #include "MiniRogue_TFG/Widgets/ShrineInteraction1.h"
 
 
@@ -15,12 +17,12 @@ AShrineRoom::AShrineRoom() {
 	PrimaryActorTick.bCanEverTick = true;
 	DiceRespawnPoint = CreateDefaultSubobject<USphereComponent>("DiceRespawnPoint");
 	DiceRespawnPoint->SetupAttachment(GetRootComponent());
-	DiceRespawnPoint->OnComponentBeginOverlap.AddDynamic(this, &AShrineRoom::OnBeginOverlap);
 }
 
 void AShrineRoom::BeginPlay()
 {
 	Super::ABaseRoom::BeginPlay();
+	RoomCollision->OnComponentBeginOverlap.AddDynamic(this, &AShrineRoom::OnBeginOverlap);
 }
 
 void AShrineRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)

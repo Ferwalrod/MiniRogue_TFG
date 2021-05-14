@@ -23,8 +23,8 @@ public:
 	USphereComponent* DiceRespawnPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dice class")
-	ADice* DiceClass;
-
+	TSubclassOf<ADice> DiceClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dice class")
 	TSubclassOf<UShrineInteraction1> WidgetClass;
 protected:
 	virtual void BeginPlay() override;
