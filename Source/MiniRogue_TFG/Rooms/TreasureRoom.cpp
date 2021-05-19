@@ -28,9 +28,9 @@ void ATreasureRoom::BeginPlay()
 
 void ATreasureRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bfromSweep, const FHitResult& SweepResult)
 {
-	ABaseCharacter* Character = Cast<ABaseCharacter>(OtherActor);
-	if (Character) {
-		PlayerCharacter = Character;
+	ABaseCharacter* Player = Cast<ABaseCharacter>(OtherActor);
+	if (Player) {
+		PlayerCharacter = Player;
 		GiveGoldReward();
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
 		APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -52,7 +52,11 @@ void ATreasureRoom::GiveGoldReward()
 {
 	if (GI) {
 		if (GI->VisitedRooms.Num() > 1) {
-
+			//(TODO) I need the trap Room
+			if (UKismetMathLibrary::ClassIsChildOf(GI->LevelPool[GI->VisitedRooms[GI->VisitedRooms.Num() - 2]],AMonsterRoom::StaticClass())) {
+				GoldReceived++;
+				PlayerCharacter->Gold = UKismetMathLibrary::Clamp(PlayerCharacter->Gold + GoldReceived, 0, PlayerCharacter->MaxGold);
+			}
 		}
 		else {
 			PlayerCharacter->Gold = UKismetMathLibrary::Clamp(PlayerCharacter->Gold+GoldReceived,0,PlayerCharacter->MaxGold);
