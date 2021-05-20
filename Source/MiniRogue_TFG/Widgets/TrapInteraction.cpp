@@ -26,6 +26,10 @@ void UTrapInteraction::NativeConstruct() {
 	if (gamemode) {
 		GM = gamemode;
 	}
+	ABaseCharacter* Player = Cast<ABaseCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	if (Player) {
+		GetPlayerLevel(Player);
+	}
 }
 
 void UTrapInteraction::NativeTick(const FGeometry& Geometry, float DeltaTime)
@@ -36,12 +40,12 @@ void UTrapInteraction::NativeTick(const FGeometry& Geometry, float DeltaTime)
 
 void UTrapInteraction::SetDiceRespawnPoint(USphereComponent* PointRef)
 {
-	
+	DiceRespawn = PointRef;
 }
 
 void UTrapInteraction::ThrowDices()
 {
-
+	APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	Controller->bEnableClickEvents = false;
 	//auto PlayerDiceClass = ConstructorHelpers::FClassFinder<AActor>(TEXT("Blueprint'/Game/Blueprints/Dices/PlayerDice.PlayerDice'"));
 	if (PlayerDiceClass) {
@@ -63,7 +67,7 @@ void UTrapInteraction::OnClicked_Accept()
 {
 	this->RemoveFromParent();
 	ThrowDices();
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &UTrapInteraction::CheckDiceValue, true, 0.8f);
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &UTrapInteraction::CheckDiceValue, 0.8f,true);
 }
 
 void UTrapInteraction::CheckDiceValue()
@@ -82,9 +86,17 @@ void UTrapInteraction::CheckDiceValue()
 					UGameplayStatics::GetAllActorsOfClass(GetWorld(), PlayerDiceClass, PlayerDices);
 					if (PlayerDices.Num() != 0) {
 						for (int i = 0; i < PlayerDices.Num(); i++) {
-							int DiceNumber;
 							ADice* Dice = Cast<ADice>(PlayerDices[i]);
-							if (*Dice->ValueMapping.Find(Dice->FaceShowing) >= 5) {
+							FName face = Dice->FaceShowing;
+							int* ptrVal = Dice->ValueMapping.Find(Dice->FaceShowing);
+							int value;
+							if (ptrVal) {
+								 value = *ptrVal;
+							}
+							else {
+								 value = 0;
+							}
+							if (value >= 5) {
 								SkillTestPass = true;
 								break;
 							}
@@ -96,12 +108,28 @@ void UTrapInteraction::CheckDiceValue()
 				TArray<AActor*> DungeonDices;
 				UGameplayStatics::GetAllActorsOfClass(GetWorld(), DungeonDiceClass, DungeonDices);
 				if (DungeonDices.Num() != 0) {
-					UTrapReward* Widget = CreateWidget<UTrapReward>(UGameplayStatics::GetPlayerController(GetWorld(), 0), SecondWidgetClass);
-					Widget->AddToViewport();
-					Widget->ApplyAndShowReward(RewardChosen, SkillTestPass);
+					ADice* DDice = Cast<ADice>(DungeonDices[0]);
+					if (DDice) {
+						int value = *DDice->ValueMapping.Find(DDice->FaceShowing);
+						UTrapReward* Widget = CreateWidget<UTrapReward>(UGameplayStatics::GetPlayerController(GetWorld(), 0), SecondWidgetClass);
+						Widget->AddToViewport();
+						Widget->ApplyAndShowReward(value, SkillTestPass);
+					}
 				}
 
-			}
+			}//AQUI PETA, PERO NO HAY NADA XDDD
 		}
+	}
+}
+void UTrapInteraction::GetPlayerLevel(ABaseCharacter* Player)
+{
+	if (Player->Exp >= 18) {
+		PlayerLevel = 3;
+	}
+	else if (Player->Exp >= 6) {
+		PlayerLevel = 2;
+	}
+	else {
+		PlayerLevel = 1;
 	}
 }

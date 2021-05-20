@@ -25,6 +25,7 @@ class MINIROGUE_TFG_API UTrapInteraction : public UUserWidget
 private:
 	FTimerHandle Timer;
 	AMiniRogue_TFGGameModeBase* GM;
+	int PlayerLevel=1;
 public:
 	//Attributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
@@ -54,7 +55,8 @@ public:
 	//Functions
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& Geometry, float DeltaTime) override;
-
+	void GetPlayerLevel(ABaseCharacter* Player);
+	
 	void SetDiceRespawnPoint(USphereComponent* PointRef);
 
 	//Macros
