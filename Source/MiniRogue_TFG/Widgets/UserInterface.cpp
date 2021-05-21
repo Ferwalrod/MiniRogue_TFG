@@ -123,7 +123,6 @@ void UUserInterface::OnClicked_Button_Pause()
 		UMG_Pause_Ref->AddToViewport();
 	}
 	else {
-		//(TODO) === IMPLEMENT PAUSE WIDGET
 		UMG_Pause_Ref = CreateWidget<UPause>(UGameplayStatics::GetPlayerController(GetWorld(),0),PauseWidgetClass);
 		UMG_Pause_Ref->AddToViewport();
 	}
