@@ -4,45 +4,44 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Pause.generated.h"
+#include "GameSettings.generated.h"
 
 class UImage;
 class UButton;
-class UGameSettings;
-
+class UUserWidget;
+class USlider;
+class UEditableText;
+class UPause;
 
 UCLASS()
-class MINIROGUE_TFG_API UPause : public UUserWidget
+class MINIROGUE_TFG_API UGameSettings : public UUserWidget
 {
 	GENERATED_BODY()
-
 public:
-	//Attributes
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-		UGameSettings* SettingsUIRef;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WidgetClass")
-		TSubclassOf<UGameSettings> WidgetClass;
+		UUserWidget* ParentWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+		UPause* PauseUIRef;
+
 	//Widget variables
 	UPROPERTY(meta = (BindWidget))
-		UButton* PauseMenu_Button_Exit;
+		UButton* Button_ReturnPauseMenu;
 	UPROPERTY(meta = (BindWidget))
-		UButton* PauseMenu_Button_Resume;
+		UEditableText* EditText_PlayerName;
 	UPROPERTY(meta = (BindWidget))
-		UButton* PauseMenu_Button_Settings;
+		UImage* IMG_Avatar;
 	UPROPERTY(meta = (BindWidget))
-		UImage* BLOCK_CLIC_FONDO;
-
+		USlider* Volume_BrightnessSlider;
+	UPROPERTY(meta = (BindWidget))
+		USlider* Volume_Slider;
 
 
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& Geometry, float DeltaTime) override;
+	void SetParentWidget(UUserWidget* Parent);
 
 	UFUNCTION()
-		void OnClicked_Resume();
-	UFUNCTION()
-		void OnClicked_Settings();
-	UFUNCTION()
-		void OnClicked_Exit();
-
+		void OnClicked_ReturnPauseMenu();
 	
 };
