@@ -9,6 +9,7 @@
 #include "MiniRogue_TFG/MiniRogue_TFGGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "MiniRogue_TFG/Widgets/UserInterface.h"
 #include "Engine/World.h"
 
 // Sets default values
@@ -43,6 +44,12 @@ void ABaseCharacter::BeginPlay()
 		this->GetMesh()->AddLocalRotation(FRotator(0.f,YawRot,0.f));
 		this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 	}
+
+	//(TODO) ==== LOAD PLAYER DATA FROM GAME INSTANCE
+	HUD = CreateWidget<UUserInterface>(UGameplayStatics::GetPlayerController(GetWorld(), 0), InterfaceClass);
+	HUD->PlayerCharacter = this;
+	HUD->UpdateInterface();
+	HUD->AddToViewport();
 }
 
 // Called every frame
@@ -133,6 +140,11 @@ void ABaseCharacter::TakeDamageCpp(int Damage)
 	else {
 		Armor = Armor - Damage;
 	}
+}
+
+void ABaseCharacter::UpdateUserInterface()
+{
+	HUD->UpdateInterface();
 }
 
 // Called to bind functionality to input

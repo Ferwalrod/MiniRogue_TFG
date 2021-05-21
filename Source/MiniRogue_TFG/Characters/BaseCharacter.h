@@ -15,6 +15,7 @@
 
 
 class APotionObject;
+class UUserInterface;
 
 UENUM(BlueprintType)
 enum EPositiveState {
@@ -78,6 +79,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* BottomArrow;
 
+	//Widgets
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WidgetClass")
+		TSubclassOf<UUserInterface> InterfaceClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		UUserInterface* HUD;
 
 
 
@@ -102,7 +108,7 @@ public:
 	void Debug();
 
 	void TakeDamageCpp(int Damage);
-
+	void UpdateUserInterface();
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
