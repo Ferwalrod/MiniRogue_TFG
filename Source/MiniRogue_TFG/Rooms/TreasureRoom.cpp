@@ -6,7 +6,7 @@
 #include "MiniRogue_TFG/Characters/BaseCharacter.h"
 #include "MiniRogue_TFG/Characters/RogueCharacter.h"
 #include "MiniRogue_TFG/MyGameInstance.h"
-//#include "MiniRogue_TFG/Rooms/TrapRoom.h"
+#include "MiniRogue_TFG/Rooms/TrapRoom.h"
 #include "MiniRogue_TFG/Rooms/MonsterRoom.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -52,9 +52,12 @@ void ATreasureRoom::GiveGoldReward()
 {
 	if (GI) {
 		if (GI->VisitedRooms.Num() > 1) {
-			//(TODO) I need the trap Room
-			if (UKismetMathLibrary::ClassIsChildOf(GI->LevelPool[GI->VisitedRooms[GI->VisitedRooms.Num() - 2]],AMonsterRoom::StaticClass())) {
+			
+			if (UKismetMathLibrary::ClassIsChildOf(GI->LevelPool[GI->VisitedRooms[GI->VisitedRooms.Num() - 2]],AMonsterRoom::StaticClass()) || UKismetMathLibrary::ClassIsChildOf(GI->LevelPool[GI->VisitedRooms[GI->VisitedRooms.Num() - 2]], ATrapRoom::StaticClass())) {
 				GoldReceived++;
+				PlayerCharacter->Gold = UKismetMathLibrary::Clamp(PlayerCharacter->Gold + GoldReceived, 0, PlayerCharacter->MaxGold);
+			}
+			else {
 				PlayerCharacter->Gold = UKismetMathLibrary::Clamp(PlayerCharacter->Gold + GoldReceived, 0, PlayerCharacter->MaxGold);
 			}
 		}

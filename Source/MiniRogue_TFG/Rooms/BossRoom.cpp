@@ -178,7 +178,7 @@ void ABossRoom::PlayerTurn()
 	if (Monster->IsDead) {
 		CombatEnded = true;
 		Character->isInCombat = false;
-		//====(TODO)=====(HERE)==========Update the HUD
+		Character->UpdateUserInterface();
 		GetWorldTimerManager().ClearTimer(CombatTimer);
 		DestroyDices();
 		Plane->SetVisibility(false, true);
@@ -212,7 +212,7 @@ void ABossRoom::PlayerTurn()
 			if (Monster->IsDead || Monster->Live <= 0) {
 				CombatEnded = true;
 				Character->isInCombat = false;
-				//===(TODO)======(HERE)==========Update the HUD
+				Character->UpdateUserInterface();
 				GetWorldTimerManager().ClearTimer(CombatTimer);
 				DestroyDices();
 				Plane->SetVisibility(false, true);
@@ -226,7 +226,7 @@ void ABossRoom::PlayerTurn()
 			else {
 				if (Monster->IsMonsterFrozen) {
 					GM->Results.Empty(ExpectedDices);
-					//====(TODO)=====UPDATE CHARACTER HUD
+					Character->UpdateUserInterface();
 					Monster->IsMonsterFrozen = false;
 					DestroyDices();
 				}
@@ -238,47 +238,47 @@ void ABossRoom::PlayerTurn()
 							Character->States.Add(ENegativeState::Poisoned);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//====(TODO)=====UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDices();
 							break;
 						case EAttackState::CurseAttack:
 							Character->States.Add(ENegativeState::Cursed);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//====(TODO)=====UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDices();
 							break;
 						case EAttackState::BlindAttack:
 							Character->States.Add(ENegativeState::Blinded);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//====(TODO)=====UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDices();
 							break;
 						case EAttackState::WeaknessAttack:
 							Character->Exp--;
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//====(TODO)=====UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDices();
 							break;
 						case EAttackState::NoArmorAttack:
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//====(TODO)=====UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDices();
 							break;
 						case EAttackState::NoneStateAttack:
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//===(TODO)======UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDices();
 							break;
 						}
 					}
 					else {
 						GM->Results.Empty(ExpectedDices);
-						//===(TODO)======UPDATE CHARACTER HUD
+						Character->UpdateUserInterface();
 						DestroyDices();
 					}
 				}
@@ -309,14 +309,14 @@ void ABossRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 			else {
 				this->RoomBehavior();
 				Character->isInCombat = true;
-				//========(TODO)===============Update the HUD
+				Character->UpdateUserInterface();
 				GetWorldTimerManager().SetTimer(Timer, this, &ABossRoom::Check, 0.3f, true);
 			}
 		}
 		else {
 			this->RoomBehavior();
 			Character->isInCombat = true;
-			//==========(TODO)=============Update the HUD
+			Character->UpdateUserInterface();
 			GetWorldTimerManager().SetTimer(Timer, this, &ABossRoom::Check, 0.3f, true);
 		}
 	}
@@ -342,10 +342,10 @@ void ABossRoom::OnLaddersOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 			ARogueCharacter* Rogue = Cast<ARogueCharacter>(Character);
 			if (Rogue) {
 				Rogue->SkillUsed = false;
-				//=======(TODO)=======Update player HUD
+				Character->UpdateUserInterface();
 			}
 			else {
-				//=======(TODO)=======Update player HUD
+				Character->UpdateUserInterface();
 			}
 			/*
 			=======(TODO)====SAVE PLAYER DATA
@@ -364,10 +364,10 @@ void ABossRoom::OnLaddersOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 			ARogueCharacter* Rogue = Cast<ARogueCharacter>(Character);
 			if (Rogue) {
 				Rogue->SkillUsed = false;
-				//====(TODO)==========Update player HUD
+				Character->UpdateUserInterface();
 			}
 			else {
-				//======(TODO)========Update player HUD
+				Character->UpdateUserInterface();
 			}
 			/*
 			=====(TODO)======SAVE PLAYER DATA

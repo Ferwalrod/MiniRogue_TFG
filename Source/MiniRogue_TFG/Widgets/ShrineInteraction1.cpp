@@ -62,7 +62,7 @@ void UShrineInteraction1::OnClicked_Normal_Pray()
 {
 	Result = 0;
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
-	//===(TODO) UPDATE HUD OF THE CHARACTER
+	PlayerCharacter->UpdateUserInterface();
 	ThrowDice();
 	this->RemoveFromParent();
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &UShrineInteraction1::Check, 0.8f, true);
@@ -74,7 +74,7 @@ void UShrineInteraction1::OnClicked_Fervorous_Pray()
 	Result = 1;
 	PlayerCharacter->Gold--;
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
-	//===(TODO) UPDATE HUD OF THE CHARACTER
+	PlayerCharacter->UpdateUserInterface();
 	ThrowDice();
 	this->RemoveFromParent();
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &UShrineInteraction1::Check, 0.8f, true);

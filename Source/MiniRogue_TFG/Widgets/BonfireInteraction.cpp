@@ -83,7 +83,7 @@ void UBonfireInteraction::OnClicked_Accept()
 
 				break;
 			}
-			//====(TODO)==== UPDATE HUD
+			Player->UpdateUserInterface();
 			Controller->bEnableClickEvents = true;
 			AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
 			UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
