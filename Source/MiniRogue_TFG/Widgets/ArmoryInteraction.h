@@ -26,7 +26,7 @@ public:
 
 	//Attributes & Classes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-		ABaseCharacter* Player;
+		ABaseCharacter* PlayerCharacter;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 		FString TXT_Reward_String;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Classes")

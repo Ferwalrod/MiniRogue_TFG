@@ -101,6 +101,7 @@ void UArmoryThrowDice::CheckDiceValue()
 						if (SkillTestPass) {
 							UArmoryInteraction* SuccessWidget = CreateWidget<UArmoryInteraction>(UGameplayStatics::GetPlayerController(GetWorld(), 0), SuccessWidgetClass);
 							SuccessWidget->Setup(value);
+							SuccessWidget->AddToViewport();
 						}
 						else {
 							USkillFail* FailWidget = CreateWidget<USkillFail>(UGameplayStatics::GetPlayerController(GetWorld(), 0), FailWidgetClass);

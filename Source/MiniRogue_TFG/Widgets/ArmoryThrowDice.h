@@ -12,8 +12,10 @@ class USphereComponent;
 class ADice;
 class UArmoryInteraction;
 class USkillFail;
+class ABaseCharacter;
 class UButton;
 class UImage;
+class AMiniRogue_TFGGameModeBase;
 
 UCLASS()
 class MINIROGUE_TFG_API UArmoryThrowDice : public UUserWidget
