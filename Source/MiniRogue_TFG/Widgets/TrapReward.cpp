@@ -290,7 +290,7 @@ void UTrapReward::ApplyAndShowReward(int RewardIndexRes, bool SkillTestRes)
 					break;
 				}
 			}
-			//(TODO)============= UPDATE HUD
+			PlayerCharacter->UpdateUserInterface();
 		}
 	}
 }

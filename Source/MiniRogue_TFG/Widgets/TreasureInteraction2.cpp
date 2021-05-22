@@ -144,7 +144,7 @@ void UTreasureInteraction2::ApplyReward(ABaseCharacter* Player, FText RewardChoi
 	else if (Option.Equals(FString(TEXT("RESTORE HABILITIES")))) {
 		Player->SkillUsed = true;
 	}
-	// (TODO)====== UPDATE HUD
+	Player->UpdateUserInterface();
 	APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     Controller->bEnableClickEvents = true;
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());

@@ -54,7 +54,7 @@ void UShrineInteraction2::NativeConstruct()
 			TXT_Reward_String = "Hp +1";
 			break;
 		}
-		//===(TODO)=== UPDATE HUD
+		PlayerCharacter->UpdateUserInterface();
 		APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		Controller->bEnableClickEvents = true;
 		AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());

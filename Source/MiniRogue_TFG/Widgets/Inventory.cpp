@@ -368,7 +368,8 @@ void UInventory::OnClicked_BTN_Close_Inventory()
 
 void UInventory::OnClicked_BTN_Weapon()
 {
-	//(TODO) IMPLEMENT WEAPONS WHEN THE ARMORY IS DONE
+	PlayerCharacter->UseWeaponCpp();
+	this->UpdateInterface();
 }
 
 void UInventory::OnHovered_Exp_Button()
