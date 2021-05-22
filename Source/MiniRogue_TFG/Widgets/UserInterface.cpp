@@ -173,6 +173,5 @@ void UUserInterface::OnClicked_Ico_Character()
 
 void UUserInterface::OnClicked_BTN_Weapon()
 {
-	//(TODO) === ADD THIS FUNCTIONALITY WHEN ARMORY AND WEAPON SYSTEM
-
+	PlayerCharacter->UseWeaponCpp();
 }

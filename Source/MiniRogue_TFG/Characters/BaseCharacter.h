@@ -109,6 +109,8 @@ public:
 
 	void TakeDamageCpp(int Damage);
 	void UpdateUserInterface();
+	void EquiptWeaponCpp(EWeaponType Weapon);
+	void UseWeaponCpp();
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
