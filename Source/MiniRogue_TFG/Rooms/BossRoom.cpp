@@ -28,6 +28,7 @@
 #include "Engine/EngineTypes.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/BoxComponent.h"
+#include "MiniRogue_TFG/Widgets/BossRewardInteraction.h"
 #include "UObject/ConstructorHelpers.h"
 
 
@@ -161,15 +162,13 @@ void ABossRoom::Check()
 		ExpectedDices = 2;
 	}
 	if (CombatEnded) {
-		//=======(TODO)=============Add Reward Widget HERE
+		
 		GetWorldTimerManager().ClearTimer(Timer);
-		this->EventFinishRoom();
-		/*
-		* 
-		* (TODO)
-		I need the boss Reward UI
-
-		*/
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+		UBossRewardInteraction* Widget = CreateWidget<UBossRewardInteraction>(UGameplayStatics::GetPlayerController(GetWorld(), 0), WidgetRewardClass);
+		Widget->BossRoomRef = this;
+		Widget->AddToViewport();
+		
 	}
 }
 
@@ -222,6 +221,10 @@ void ABossRoom::PlayerTurn()
 				Character->Exp = UKismetMathLibrary::Clamp(Monster->Reward + Character->Exp, 0, Character->MaxExp);
 				MonsterSpawned->SetChildActorClass(nullptr);
 				MonsterSpawned->CreateChildActor();
+				Controller->bEnableClickEvents = false;
+				Character->RightArrowVisibility = false;
+				Character->BottomArrowVisibility = false;
+				NextLevel();
 			}
 			else {
 				if (Monster->IsMonsterFrozen) {
