@@ -17,6 +17,7 @@ class AActor;
 class UPrimitiveComponent;
 class ADice;
 class UBoxComponent;
+class UBossRewardInteraction;
 
 UCLASS()
 class MINIROGUE_TFG_API ABossRoom : public ABaseRoom
@@ -37,10 +38,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		UBoxComponent* Ladders;
 
+	
+	//Widget Reward
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WidgetClass")
+		TSubclassOf<UBossRewardInteraction> WidgetRewardClass;
+
 	//Attributes
 	FTimerHandle CombatTimer;
 	FTimerHandle Timer;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 		bool CombatEnded;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
