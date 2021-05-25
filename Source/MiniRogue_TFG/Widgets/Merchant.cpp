@@ -205,7 +205,7 @@ void UMerchant::OnClicked_Sell_Option1()
 			RefreshGold(Player->Gold);
 		}
 
-		// (TODO) ===== UPDATE HUD
+		Player->UpdateUserInterface();
 	}
 }
 
@@ -238,7 +238,7 @@ void UMerchant::OnClicked_Option1()
 		}
 	}
 
-	// (TODO) ==== UPDATE HUD
+	Player->UpdateUserInterface();
 }
 
 void UMerchant::OnClicked_Option2()
@@ -497,7 +497,7 @@ void UMerchant::OnClicked_Sell_Fire_potion_Button()
 			Player->Gold = UKismetMathLibrary::Clamp(Player->Gold + 3, 0, Player->MaxGold);
 			RefreshGold(Player->Gold);
 			RefreshPotions();
-			// (TODO) ======== UPDATE HUD
+			Player->UpdateUserInterface();
 		}
 		else {
 			DescriptionText = DescriptionTexts[22];
@@ -516,7 +516,7 @@ void UMerchant::OnClicked_Sell_Frost_potion_Button()
 			Player->Gold = UKismetMathLibrary::Clamp(Player->Gold + 3, 0, Player->MaxGold);
 			RefreshGold(Player->Gold);
 			RefreshPotions();
-			// (TODO) ======== UPDATE HUD
+			Player->UpdateUserInterface();
 		}
 		else {
 			DescriptionText = DescriptionTexts[22];
@@ -535,7 +535,7 @@ void UMerchant::OnClicked_Sell_Holy_potion_Button()
 			Player->Gold = UKismetMathLibrary::Clamp(Player->Gold + 3, 0, Player->MaxGold);
 			RefreshGold(Player->Gold);
 			RefreshPotions();
-			// (TODO) ======== UPDATE HUD
+			Player->UpdateUserInterface();
 		}
 		else {
 			DescriptionText = DescriptionTexts[22];
@@ -554,7 +554,7 @@ void UMerchant::OnClicked_Sell_Health_potion_Button()
 			Player->Gold = UKismetMathLibrary::Clamp(Player->Gold + 3, 0, Player->MaxGold);
 			RefreshGold(Player->Gold);
 			RefreshPotions();
-			// (TODO) ======== UPDATE HUD
+			Player->UpdateUserInterface();
 		}
 		else {
 			DescriptionText = DescriptionTexts[22];
@@ -573,7 +573,7 @@ void UMerchant::OnClicked_Sell_Perception_potion_Button()
 			Player->Gold = UKismetMathLibrary::Clamp(Player->Gold + 3, 0, Player->MaxGold);
 			RefreshGold(Player->Gold);
 			RefreshPotions();
-			// (TODO) ======== UPDATE HUD
+			Player->UpdateUserInterface();
 		}
 		else {
 			DescriptionText = DescriptionTexts[22];
@@ -592,7 +592,7 @@ void UMerchant::OnClicked_Sell_Poison_potion_Button()
 			Player->Gold = UKismetMathLibrary::Clamp(Player->Gold + 3, 0, Player->MaxGold);
 			RefreshGold(Player->Gold);
 			RefreshPotions();
-			// (TODO) ======== UPDATE HUD
+			Player->UpdateUserInterface();
 		}
 		else {
 			DescriptionText = DescriptionTexts[22];

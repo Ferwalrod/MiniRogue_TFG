@@ -200,7 +200,7 @@ void ATombRoom::WaitForSearchResults()
 							Controller->bEnableClickEvents = true;
 							DestroyDicesForSearch();
 							GM->Results.Empty();
-							//===(TODO)======= UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 						}
 						break;
 					case 2:
@@ -215,7 +215,7 @@ void ATombRoom::WaitForSearchResults()
 						Controller->bEnableClickEvents = true;
 						DestroyDicesForSearch();
 						GM->Results.Empty();
-						//===(TODO)======= UPDATE CHARACTER HUD
+						Character->UpdateUserInterface();
 						break;
 					case 3:
 						Character->Gold = UKismetMathLibrary::Clamp(Character->Gold++, 0, Character->MaxGold);
@@ -229,7 +229,7 @@ void ATombRoom::WaitForSearchResults()
 						Controller->bEnableClickEvents = true;
 						DestroyDicesForSearch();
 						GM->Results.Empty();
-						//===(TODO)======= UPDATE CHARACTER HUD
+						Character->UpdateUserInterface();
 						break;
 					case 4:
 						Character->Exp = UKismetMathLibrary::Clamp(Character->Exp++, 0, Character->MaxGold);
@@ -243,7 +243,7 @@ void ATombRoom::WaitForSearchResults()
 						Controller->bEnableClickEvents = true;
 						DestroyDicesForSearch();
 						GM->Results.Empty();
-						//===(TODO)======= UPDATE CHARACTER HUD
+						Character->UpdateUserInterface();
 						break;
 					case 5:
 						Character->Food = UKismetMathLibrary::Clamp(Character->Food--, 0, Character->MaxFood);
@@ -257,7 +257,7 @@ void ATombRoom::WaitForSearchResults()
 						Controller->bEnableClickEvents = true;
 						DestroyDicesForSearch();
 						GM->Results.Empty();
-						//===(TODO)======= UPDATE CHARACTER HUD
+						Character->UpdateUserInterface();
 						break;
 					case 6:
 						StartCombat();
@@ -269,7 +269,7 @@ void ATombRoom::WaitForSearchResults()
 						Message->SetVisibility(false, true);
 						DestroyDicesForSearch();
 						GM->Results.Empty(ExpectedDices);
-						//====(TODO)===== UPDATE CHARACTER HUD
+						Character->UpdateUserInterface();
 						break;
 					}
 
@@ -290,7 +290,7 @@ void ATombRoom::WaitForSearchResults()
 			Message->SetVisibility(false, true);
 			DestroyDicesForSearch();
 			GM->Results.Empty();
-			//===(TODO)======= UPDATE CHARACTER HUD
+			Character->UpdateUserInterface();
 		}
 	}
 }
@@ -319,7 +319,7 @@ void ATombRoom::PlayerTurn()
 	if (Monster->IsDead) {
 		CombatEnded = true;
 		Character->isInCombat = false;
-		//=========(HERE)==========Update the HUD
+		Character->UpdateUserInterface();
 		GetWorldTimerManager().ClearTimer(CombatTimer);
 		DestroyDicesForCombat();
 		Combat_Button->SetVisibility(false, true);
@@ -354,7 +354,7 @@ void ATombRoom::PlayerTurn()
 			if (Monster->IsDead || Monster->Live <= 0) {
 				CombatEnded = true;
 				Character->isInCombat = false;
-				//=========(HERE)==========Update the HUD
+				Character->UpdateUserInterface();
 				GetWorldTimerManager().ClearTimer(CombatTimer);
 				DestroyDicesForCombat();
 				Combat_Button->SetVisibility(false, true);
@@ -369,7 +369,7 @@ void ATombRoom::PlayerTurn()
 			else {
 				if (Monster->IsMonsterFrozen) {
 					GM->Results.Empty(ExpectedDices);
-					//=========UPDATE CHARACTER HUD
+					Character->UpdateUserInterface();
 					Monster->IsMonsterFrozen = false;
 					DestroyDicesForCombat();
 				}
@@ -381,47 +381,47 @@ void ATombRoom::PlayerTurn()
 							Character->States.Add(ENegativeState::Poisoned);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDicesForCombat();
 							break;
 						case EAttackState::CurseAttack:
 							Character->States.Add(ENegativeState::Cursed);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDicesForCombat();
 							break;
 						case EAttackState::BlindAttack:
 							Character->States.Add(ENegativeState::Blinded);
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDicesForCombat();
 							break;
 						case EAttackState::WeaknessAttack:
 							Character->Exp--;
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDicesForCombat();
 							break;
 						case EAttackState::NoArmorAttack:
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDicesForCombat();
 							break;
 						case EAttackState::NoneStateAttack:
 							Character->TakeDamageCpp(Monster->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//=========UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDicesForCombat();
 							break;
 						}
 					}
 					else {
 						GM->Results.Empty(ExpectedDices);
-						//=========UPDATE CHARACTER HUD
+						Character->UpdateUserInterface();
 						DestroyDicesForCombat();
 					}
 				}
