@@ -55,6 +55,11 @@ AOgRoom::AOgRoom() {
 void AOgRoom::BeginPlay()
 {
 	Super::ABaseRoom::BeginPlay();
+	Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	AMiniRogue_TFGGameModeBase* gamemode = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (gamemode) {
+		GM = gamemode;
+	}
 }
 
 void AOgRoom::Tick(float DeltaTime)
@@ -197,7 +202,7 @@ void AOgRoom::PlayerTurn()
 			else {
 				if (FinalBoss->IsMonsterFrozen) {
 					GM->Results.Empty(ExpectedDices);
-					//====(TODO)=====UPDATE CHARACTER HUD
+					Character->UpdateUserInterface();
 					FinalBoss->IsMonsterFrozen = false;
 					DestroyDices();
 				}
@@ -209,21 +214,21 @@ void AOgRoom::PlayerTurn()
 							Character->States.Add(ENegativeState::Poisoned);
 							Character->TakeDamageCpp(FinalBoss->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//====(TODO)=====UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDices();
 							break;
 						case EAttackState::CurseAttack:
 							Character->States.Add(ENegativeState::Cursed);
 							Character->TakeDamageCpp(FinalBoss->Damage);
 							GM->Results.Empty(ExpectedDices);
-							//====(TODO)=====UPDATE CHARACTER HUD
+							Character->UpdateUserInterface();
 							DestroyDices();
 							break;
 						}
 					}
 					else {
 						GM->Results.Empty(ExpectedDices);
-						//===(TODO)======UPDATE CHARACTER HUD
+						Character->UpdateUserInterface();
 						DestroyDices();
 					}
 				}
@@ -247,7 +252,7 @@ void AOgRoom::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 		Character = Player;
 		this->RoomBehavior();
 		Character->isInCombat = true;
-		//==========(TODO)=============Update the HUD
+		Character->UpdateUserInterface();
 		GetWorldTimerManager().SetTimer(Timer, this, &AOgRoom::Check, 0.3f, true);
 		
 	}

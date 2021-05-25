@@ -18,10 +18,12 @@
 
 void UOgState::NativeConstruct()
 {
+	Super::NativeConstruct();
 }
 
 void UOgState::NativeTick(const FGeometry& Geometry, float DeltaTime)
 {
+	Super::NativeTick(Geometry, DeltaTime);
 	if (Og) {
 		ProgressBar_106->SetPercent(GetPercent());
 		//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Porcentaje de vida: %f"),(GetPercent())));
@@ -68,7 +70,6 @@ void UOgState::SetMonsterOwner(AOgRemains* Owner)
 	FLatentActionInfo info = FLatentActionInfo();
 	UKismetSystemLibrary::Delay(GetWorld(), 0.01f, info);
 	damage_type->SetBrushSize(FVector2D(44.f, 44.f));
-
 	Name_Text->SetText(GetNameText());
 	Phase->SetText(GetPhaseText());
 	Damage_text->SetText(GetDamageText());
@@ -80,6 +81,18 @@ void UOgState::UpdateWidget()
 	damage_type->SetBrushSize(FVector2D(44.f, 44.f));
 	Name_Text->SetText(GetNameText());
 	Phase->SetText(GetPhaseText());
+	switch (Og->DamageType) {
+	case EAttackState::PoisonAttack:
+		if (Poison) {
+			DamageTexture = Poison;
+		}
+		break;
+	case EAttackState::CurseAttack:
+		if (Curse) {
+			DamageTexture = Curse;
+		}
+		break;
+	}
 	Damage_text->SetText(GetDamageText());
 	ProgressBar_106->SetPercent(GetPercent());
 }
