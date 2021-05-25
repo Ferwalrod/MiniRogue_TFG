@@ -8,10 +8,10 @@ AGoblinRoom::AGoblinRoom() {
 }
 void AGoblinRoom::BeginPlay()
 {
-	Super::AMonsterRoom::BeginPlay();
+	Super::BeginPlay();
 }
 
 void AGoblinRoom::Tick(float DeltaTime)
 {
-	Super::AMonsterRoom::Tick(DeltaTime);
+	Super::Tick(DeltaTime);
 }

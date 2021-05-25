@@ -8,10 +8,10 @@ AUndeadRoom::AUndeadRoom() {
 }
 void AUndeadRoom::BeginPlay()
 {
-	Super::AMonsterRoom::BeginPlay();
+	Super::BeginPlay();
 }
 
 void AUndeadRoom::Tick(float DeltaTime)
 {
-	Super::AMonsterRoom::Tick(DeltaTime);
+	Super::Tick(DeltaTime);
 }
