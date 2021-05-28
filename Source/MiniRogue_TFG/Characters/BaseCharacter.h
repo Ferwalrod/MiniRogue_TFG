@@ -15,6 +15,7 @@
 
 
 class APotionObject;
+class UUserInterface;
 
 UENUM(BlueprintType)
 enum EPositiveState {
@@ -54,7 +55,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	int WeaponCharges = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-	TArray<APotionObject*> Potions;
+	TArray<TSubclassOf<APotionObject>> Potions;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TSet<TEnumAsByte<ENegativeState>> States;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
@@ -69,6 +70,8 @@ public:
 	bool isInCombat = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TEnumAsByte<EWeaponType> currentWeapon = NoWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	bool SkillUsed = false;
 
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -76,6 +79,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* BottomArrow;
 
+	//Widgets
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WidgetClass")
+		TSubclassOf<UUserInterface> InterfaceClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		UUserInterface* HUD;
 
 
 
@@ -101,8 +109,10 @@ public:
 
 	void Debug();
 
-	
-
+	void TakeDamageCpp(int Damage);
+	void UpdateUserInterface();
+	void EquiptWeaponCpp(EWeaponType Weapon);
+	void UseWeaponCpp();
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

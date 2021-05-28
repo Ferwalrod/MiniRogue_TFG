@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "MiniRogue_TFG/Room.h"
+#include "MiniRogue_TFG/Rooms/BaseRoom.h"
 #include "MyGameInstance.generated.h"
 
-/**
- * 
- */
+
+class AMonsterBase;
+
 UCLASS()
 class MINIROGUE_TFG_API UMyGameInstance : public UGameInstance
 {
@@ -21,16 +22,26 @@ public:
 	//Attributes
 	//Total de habitaciones
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Room Data")
-	TArray<TSubclassOf<class ARoom>> Rooms;
+	TArray<TSubclassOf<class ABaseRoom>> Rooms;
 	//Habitaciones en el nivel
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Data")
-	TArray<TSubclassOf<class ARoom>> LevelPool;
+	TArray<TSubclassOf<class ABaseRoom>> LevelPool;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Room Data")
 	int RoomIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
 	int LevelIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
 	int FloorIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
+	AMonsterBase* ActMonster;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
+	AMonsterBase* ActBoss;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
+	bool IsANewFloor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Data")
+		TArray<int> VisitedRooms;
+
 
 	void PassLevel();
 	void PassFloor();
