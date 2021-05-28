@@ -32,6 +32,11 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+}
+
+void ABaseCharacter::SetupPlayer() {
+
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
 	GetWorldTimerManager().SetTimer(Timer, this, &ABaseCharacter::CheckArrowVisibilities, 1.f, true);
 	if (GM) {
@@ -42,8 +47,8 @@ void ABaseCharacter::BeginPlay()
 		BottomArrow->SetVisibility(BottomArrowVisibility);
 		RightArrow->SetVisibility(RightArrowVisibility);
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, Center);
-		float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(),Center).Yaw;
-		this->GetMesh()->AddLocalRotation(FRotator(0.f,YawRot,0.f));
+		float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), Center).Yaw;
+		this->GetMesh()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 		this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 	}
 
@@ -52,6 +57,7 @@ void ABaseCharacter::BeginPlay()
 	HUD->PlayerCharacter = this;
 	HUD->UpdateInterface();
 	HUD->AddToViewport();
+
 }
 
 // Called every frame
