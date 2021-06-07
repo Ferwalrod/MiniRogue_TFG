@@ -84,6 +84,9 @@ void ABaseCharacter::OnClickedRightArrow(UPrimitiveComponent* TouchedComponent, 
 			FVector FinalLoc = GM->RightDoor;
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, FinalLoc);
 			float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), FinalLoc).Yaw;
+			if (playerCameFromLeft) {
+				YawRot = 0.0f;
+			}
 			this->GetMesh()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			Controllerel->bEnableClickEvents = false;
@@ -103,6 +106,9 @@ void ABaseCharacter::OnClickedBottomArrow(UPrimitiveComponent* TouchedComponent,
 			FVector FinalLoc = GM->BottomDoor;
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, FinalLoc);
 			float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), FinalLoc).Yaw;
+			if (playerCameFromLeft) {
+				YawRot = 90.0f;
+			}
 			this->GetMesh()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			Controllerel->bEnableClickEvents = false;

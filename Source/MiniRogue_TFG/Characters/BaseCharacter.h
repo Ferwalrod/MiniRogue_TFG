@@ -69,6 +69,8 @@ public:
 	bool isInCombat = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TEnumAsByte<EWeaponType> currentWeapon = NoWeapon;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attributes")
+	bool playerCameFromLeft = false;
 
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
