@@ -7,7 +7,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "InputCoreTypes.h"
 #include "MiniRogue_TFG/Enumerates/NegativeState.h"
-//#include "MiniRogue_TFG/Enumerates/PositiveState.h"
+#include "MiniRogue_TFG/WeaponType.h"
 #include "TimerManager.h"
 #include "MiniRogue_TFG/Interfaces/Potion.h"
 #include "GameFramework/Character.h"
@@ -51,7 +51,7 @@ public:
 	int Armor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
 	int MaxArmor = 4;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	int WeaponCharges = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	TArray<APotionObject*> Potions;
@@ -67,6 +67,11 @@ public:
 	bool NextSuccess = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
 	bool isInCombat = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+	TEnumAsByte<EWeaponType> currentWeapon = NoWeapon;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attributes")
+	bool playerCameFromLeft = false;
+
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* RightArrow;
@@ -93,6 +98,8 @@ public:
 	void OnClickedRightArrow(UPrimitiveComponent* TouchedComponent,FKey buttonPresed);
 	UFUNCTION()
 	void OnClickedBottomArrow(UPrimitiveComponent* TouchedComponent, FKey buttonPresed);
+	UFUNCTION(BlueprintCallable)
+	void SetupPlayer();
 
 	void Debug();
 

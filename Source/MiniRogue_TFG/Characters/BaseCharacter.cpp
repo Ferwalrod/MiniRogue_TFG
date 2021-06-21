@@ -29,6 +29,11 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+}
+
+void ABaseCharacter::SetupPlayer() {
+
 	AMiniRogue_TFGGameModeBase* GM = Cast<AMiniRogue_TFGGameModeBase>(GetWorld()->GetAuthGameMode());
 	GetWorldTimerManager().SetTimer(Timer, this, &ABaseCharacter::CheckArrowVisibilities, 1.f, true);
 	if (GM) {
@@ -39,10 +44,11 @@ void ABaseCharacter::BeginPlay()
 		BottomArrow->SetVisibility(BottomArrowVisibility);
 		RightArrow->SetVisibility(RightArrowVisibility);
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, Center);
-		float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(),Center).Yaw;
-		this->GetMesh()->AddLocalRotation(FRotator(0.f,YawRot,0.f));
+		float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), Center).Yaw;
+		this->GetMesh()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 		this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 	}
+
 }
 
 // Called every frame
@@ -78,6 +84,9 @@ void ABaseCharacter::OnClickedRightArrow(UPrimitiveComponent* TouchedComponent, 
 			FVector FinalLoc = GM->RightDoor;
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, FinalLoc);
 			float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), FinalLoc).Yaw;
+			if (playerCameFromLeft) {
+				YawRot = 0.0f;
+			}
 			this->GetMesh()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			Controllerel->bEnableClickEvents = false;
@@ -97,6 +106,9 @@ void ABaseCharacter::OnClickedBottomArrow(UPrimitiveComponent* TouchedComponent,
 			FVector FinalLoc = GM->BottomDoor;
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controllerel, FinalLoc);
 			float YawRot = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), FinalLoc).Yaw;
+			if (playerCameFromLeft) {
+				YawRot = 90.0f;
+			}
 			this->GetMesh()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			this->GetCapsuleComponent()->AddLocalRotation(FRotator(0.f, YawRot, 0.f));
 			Controllerel->bEnableClickEvents = false;
