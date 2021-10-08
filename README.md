@@ -1,3 +1,3 @@
 # MiniRogue_TFG
 
-Trabajo final de grado de Fernando Wals Rodriguez y Angel Pomares Luza. Este TFG consiste en la adaptación de un juego de mesa conocido como Mini Rogue, de Mountain Gold Games, los cuales nos han dado permiso para realizar una adaptación mediante Unreal Engine, un motor de videojuegos muy usado en la industria. 
+Final degree project by Fernando Wals Rodriguez and Angel Pomares Luza of University of Seville. This project consists of the adaptation of a board game known as Mini Rogue, by Mountain Gold Games, which have given us permission to make an adaptation using Unreal Engine, a video game engine widely used in the industry.
